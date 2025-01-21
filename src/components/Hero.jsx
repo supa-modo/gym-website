@@ -30,7 +30,7 @@ const Hero = () => {
 
       {/* Enhanced gradient overlay with multiple layers */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-transparent z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/20 z-10" />
 
       {/* Animated decorative elements */}
       <div className="absolute inset-0 z-10">
@@ -38,63 +38,97 @@ const Hero = () => {
         <div className="absolute bottom-1/3 right-1/4 w-40 h-40 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
+      {/* Vertical flowing text on right */}
+      <div className="absolute right-24 top-1/2 -translate-y-1/2 transform z-20 hidden lg:flex items-center">
+        <div
+          className="relative -rotate-180 mr-10"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="flex flex-col gap-2 text-gray-500 tracking-widest uppercase text-lg"
+          >
+            <span className="hover:text-primary transition-colors duration-300">
+              Strength
+            </span>
+            <span className="text-primary font-bold">Discipline</span>
+            <span className="hover:text-primary transition-colors duration-300">
+              Dedication
+            </span>
+            <span className="text-primary/80 font-bold">Excellence</span>
+          </motion.div>
+        </div>
+
+        <div className="w-[2px] h-48 bg-gradient-to-b from-transparent via-gray-500 to-transparent"></div>
+      </div>
+
       {/* Content */}
-      <div className="relative z-20 max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-20 mx-auto px-2 sm:px-6 lg:px-16 w-full">
         <div className="max-w-2xl ml-8 lg:ml-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-xl md:text-2xl font-bold mb-6 leading-tight text-white">
+            <h1 className="text-4xl md:text-6xl font-open font-extrabold mb-6 text-white">
               Transform Your Body,
               <br />
               <span className="text-primary bg-gradient-to-r from-primary to-red-500 bg-clip-text text-transparent">
                 Transform Your Life
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-xl">
+            <p className="text-base md:text-lg font-nunito text-gray-300 mb-8 max-w-xl">
               Join the elite community of fitness enthusiasts and achieve your
               ultimate fitness goals with our state-of-the-art facilities and
               expert trainers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-primary text-white px-8 py-4 rounded-full font-semibold text-lg 
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-primary text-white mb-10 px-10 py-3 sm:py-4 rounded-2xl font-semibold text-lg 
                             hover:bg-red-700 transition-colors shadow-lg shadow-primary/20 
                             hover:shadow-primary/40"
-              >
+            >
+              <span className="text-[0.9rem] sm:text-base">
                 Start Your Journey
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 
-                            rounded-full font-semibold text-lg hover:bg-white/10 transition-colors"
-              >
-                View Programs
-              </motion.button>
-            </div>
-
-            {/* Stats Section */}
-            <div className="mt-16 grid grid-cols-3 gap-8 max-w-lg">
-              <div className="text-center">
-                <h3 className="text-4xl font-bold text-primary mb-2">500+</h3>
-                <p className="text-gray-400 text-sm">Active Members</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-4xl font-bold text-primary mb-2">50+</h3>
-                <p className="text-gray-400 text-sm">Expert Trainers</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-4xl font-bold text-primary mb-2">25+</h3>
-                <p className="text-gray-400 text-sm">Programs</p>
-              </div>
-            </div>
+              </span>
+            </motion.button>
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="sm:pl-12"
+        >
+          {/* Stats Section */}
+          <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-8 md:max-w-4xl">
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl sm:px-10 py-6">
+              <h3 className="text-xl sm:text-4xl font-bold text-primary mb-2">
+                100+
+              </h3>
+              <p className="text-gray-400 text-xs sm:text-sm">Active Members</p>
+            </div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl sm:px-10 py-6">
+              <h3 className="text-xl sm:text-4xl font-bold text-primary mb-2">
+                10+
+              </h3>
+              <p className="text-gray-400 text-xs sm:text-sm">
+                Expert Trainers
+              </p>
+            </div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl sm:px-10 py-6">
+              <h3 className="text-xl sm:text-4xl font-bold text-primary mb-2">
+                15+
+              </h3>
+              <p className="text-gray-400 text-xs sm:text-sm">Programs</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
