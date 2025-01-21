@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Hero = () => {
   const [offset, setOffset] = useState(0);
@@ -48,7 +50,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="flex flex-col gap-2 text-gray-500 tracking-widest uppercase text-lg"
+            className="flex flex-col gap-2 text-gray-500 tracking-widest uppercase text-base md:text-lg"
           >
             <span className="hover:text-primary transition-colors duration-300">
               Strength
@@ -66,14 +68,15 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-20 mx-auto px-2 sm:px-6 lg:px-16 w-full">
-        <div className="max-w-2xl ml-8 lg:ml-20">
+        <div className="max-w-2xl ml-2 md:ml-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1 }}
           >
             <h1 className="text-4xl md:text-6xl font-open font-extrabold mb-6 text-white">
-              Transform Your Body,
+              Transform Your <br />
+              Body,
               <br />
               <span className="text-primary bg-gradient-to-r from-primary to-red-500 bg-clip-text text-transparent">
                 Transform Your Life
@@ -88,7 +91,7 @@ const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-primary text-white mb-10 px-10 py-3 sm:py-4 rounded-2xl font-semibold text-lg 
+              className="bg-primary text-white mb-8 px-10 py-3 sm:py-4 rounded-2xl font-semibold text-lg 
                             hover:bg-red-700 transition-colors shadow-lg shadow-primary/20 
                             hover:shadow-primary/40"
             >
@@ -96,6 +99,33 @@ const Hero = () => {
                 Start Your Journey
               </span>
             </motion.button>
+
+            {/* Social Media Icons */}
+            <div className="flex items-center gap-4 mb-16">
+              {[
+                { icon: FaFacebookF, link: "#" },
+                { icon: FaInstagram, link: "#" },
+                { icon: FaXTwitter, link: "#" },
+                { icon: FaYoutube, link: "#" },
+              ].map((social, index) => (
+                <motion.a
+                  key={index}
+                  href={social.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center
+                           text-gray-300 hover:text-white hover:bg-primary/20 transition-all duration-300
+                           border border-white/10 hover:border-primary"
+                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <social.icon className="w-5 h-5" />
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
         </div>
 

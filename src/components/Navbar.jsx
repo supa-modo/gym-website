@@ -91,25 +91,27 @@ const Navbar = () => {
             : "opacity-0 -translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-black/95 backdrop-blur-lg border-t border-gray-800">
+        <div className="px-4 pt-2 pb-3 space-y-1 bg-black/95 backdrop-blur-lg border-t border-gray-800">
           {["Home", "Classes", "Store", "Membership", "Contact"].map((item) => (
             <a
               key={item}
               href="#"
-              className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
+              className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
                 rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
             >
               {item}
             </a>
           ))}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full mt-2 bg-primary text-white px-8 py-2 rounded-xl font-extrabold 
+          <div className="px-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full mt-2 bg-primary text-white px-8 py-2 rounded-xl font-extrabold 
             font-nunito transition-all duration-300 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20"
-          >
-            Join Now
-          </motion.button>
+            >
+              Join Now
+            </motion.button>
+          </div>
         </div>
       </div>
     </nav>
