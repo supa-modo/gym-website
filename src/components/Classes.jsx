@@ -149,7 +149,7 @@ const Classes = () => {
   const activeClass = classes[activeIndex];
 
   return (
-    <section className="py-20 bg-secondary relative overflow-hidden">
+    <section id="classes" className="pt-24 pb-20 bg-secondary relative overflow-hidden">
       {/* Dynamic Background Pattern */}
       <div
         className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from),_transparent_50%)] opacity-5"
@@ -173,9 +173,9 @@ const Classes = () => {
             Elite Training Programs
             <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary to-transparent"></div>
           </h2>
-          <p className="text-gray-400 text-[15px] sm:text-lg">
+          <p className="text-gray-400 text-[14px] sm:text-lg">
             Discover your perfect fitness journey with our diverse range of
-            expert-led classes
+            expert-led classes. Swipe left or right below to browse through the programs we offer
           </p>
         </motion.div>
 

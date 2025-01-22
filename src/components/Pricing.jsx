@@ -72,7 +72,7 @@ const Pricing = () => {
   };
 
   return (
-    <section className="py-20 bg-secondary relative overflow-hidden">
+    <section id="pricing" className="pt-24 pb-20 bg-secondary relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#FF0000,_transparent_50%)] opacity-5"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_55%)] opacity-5"></div>
@@ -195,7 +195,7 @@ const Pricing = () => {
                   >
                     {/* Updated Icon Styling */}
                     <div
-                      className={`w-5 h-5 mr-3  rounded-full flex items-center justify-center`}
+                      className={`w-5 h-5 mr-4 flex items-center justify-center`}
                     >
                       <BsCheckLg className="w-4 h-4 text-amber-500" />
                     </div>

@@ -6,6 +6,15 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Navigation array
+  const navigation = [
+    { name: "Home", href: "/" },
+    { name: "Classes", href: "#classes" },
+    { name: "Store", href: "#" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Contact", href: "#contact" },
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -38,19 +47,17 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex space-x-10 font-nunito font-extrabold text-[17px]">
-              {["Home", "Classes", "Store", "Membership", "Contact"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="text-gray-300 hover:text-white relative inline-block transition-colors duration-300
+              {navigation.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-300 hover:text-white relative inline-block transition-colors duration-300
                     before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 
                     before:bg-primary before:transition-all before:duration-300 hover:before:w-full"
-                  >
-                    {item}
-                  </a>
-                )
-              )}
+                >
+                  {item.name}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -92,14 +99,14 @@ const Navbar = () => {
         }`}
       >
         <div className="px-4 pt-2 pb-3 space-y-1 bg-black/95 backdrop-blur-lg border-t border-gray-800">
-          {["Home", "Classes", "Store", "Membership", "Contact"].map((item) => (
+          {navigation.map((item) => (
             <a
-              key={item}
-              href="#"
+              key={item.name}
+              href={item.href}
               className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
                 rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
             >
-              {item}
+              {item.name}
             </a>
           ))}
           <div className="px-3">

@@ -6,6 +6,7 @@ import Classes from "./components/Classes";
 import Testimonials from "./components/Testimonials";
 import Pricing from "./components/Pricing";
 import Footer from "./components/Footer";
+import ContactForm from "./components/ContactForm";
 
 function App() {
   return (
@@ -14,8 +15,8 @@ function App() {
       <Hero />
       <Features />
       <Classes />
-      <Testimonials />
       <Pricing />
+      <ContactForm />
       <Footer />
     </div>
   );
