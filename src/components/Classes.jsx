@@ -13,7 +13,7 @@ const Classes = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       paginate(1);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, [activeIndex]);
@@ -266,7 +266,7 @@ const Classes = () => {
                       transition={{ delay: 0.3 }}
                       className="bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6"
                     >
-                      <h4 className="text-white text-sm md:text-base font-semibold mb-4">
+                      <h4 className="text-white text-sm md:text-base font-semibold mb-2 sm:mb-4">
                         About This Class
                       </h4>
                       <p className="text-gray-400 text-sm md:text-base">{activeClass.description}</p>
@@ -277,9 +277,9 @@ const Classes = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6"
+                      className="bg-zinc-800/50 backdrop-blur-sm rounded-xl px-6 py-4 sm:py-6"
                     >
-                      <div className="flex items-center gap-2 mb-4">
+                      <div className="flex items-center gap-2 mb-2 sm:mb-4">
                         <BsClockFill className="text-primary" />
                         <h4 className="text-white text-sm md:text-base font-semibold">
                           Class Schedule
