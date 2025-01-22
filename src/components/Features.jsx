@@ -1,74 +1,73 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Dumbbell,
-  Trophy,
-  Target,
-  Users,
-  Clock,
-  Zap,
-  Shield,
-  HeartPulse,
-} from "lucide-react";
+import { FaPeoplePulling } from "react-icons/fa6";
+import { FaShieldAlt } from "react-icons/fa";
+import { FiTarget, FiZap } from "react-icons/fi";
+import { MdLocalDining } from "react-icons/md";
+import { PiUsersThreeDuotone } from "react-icons/pi";
+import { GoTrophy } from "react-icons/go";
+import { LuDumbbell } from "react-icons/lu";
 
 const Features = () => {
   const features = [
     {
-      icon: Dumbbell,
+      icon: LuDumbbell,
       title: "Premium Equipment",
       description: "State-of-the-art fitness equipment for maximum performance",
       color: "from-red-600 to-orange-600",
     },
     {
-      icon: Trophy,
+      icon: GoTrophy,
       title: "Expert Coaching",
       description:
         "Professional certified trainers to guide your fitness journey",
       color: "from-blue-600 to-cyan-600",
     },
     {
-      icon: Target,
+      icon: FiTarget,
       title: "Custom Programs",
       description: "Personalized workout plans tailored to your goals",
       color: "from-green-600 to-emerald-600",
     },
     {
-      icon: Users,
+      icon: PiUsersThreeDuotone,
       title: "Community",
-      description: "Join a motivated community that inspires success",
+      description: "Be part of a motivated community that inspires success",
       color: "from-purple-600 to-pink-600",
     },
     {
-      icon: Clock,
-      title: "24/7 Access",
-      description: "Train anytime with round-the-clock facility access",
+      icon: MdLocalDining,
+      title: "Nutritional Guidance",
+      description: "Expert nutritional guidance to help you achieve your goals",
       color: "from-yellow-600 to-amber-600",
     },
     {
-      icon: Zap,
+      icon: FiZap,
       title: "HIIT Classes",
       description: "High-intensity interval training for rapid results",
       color: "from-indigo-600 to-violet-600",
     },
     {
-      icon: Shield,
+      icon: FaShieldAlt,
       title: "Safe Environment",
-      description: "Clean and secure facilities for peace of mind",
+      description:
+        "Clean and secure facilities for peace of mind while training",
       color: "from-teal-600 to-cyan-600",
     },
     {
-      icon: HeartPulse,
-      title: "Health Tracking",
-      description: "Monitor your progress with advanced metrics",
+      icon: FaPeoplePulling,
+      title: "Group Classes",
+      description:
+        "Join group classes to stay motivated and accountable with your fitness journey",
       color: "from-rose-600 to-pink-600",
     },
   ];
 
   return (
-    <section className="py-20 bg-zinc-900 relative overflow-hidden">
+    <section className="py-20 bg-secondary/5 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#FF0000,_transparent_50%)] opacity-10"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_50%)] opacity-10"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_55%)] opacity-10"></div>
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -79,11 +78,11 @@ const Features = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 relative inline-block">
-              Why ChooseElite Fitness?
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 relative inline-block">
+              Why Choose Elite Fitness?
               <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary to-transparent"></div>
             </h2>
-            <p className="text-gray-400 text-base sm:text-lg">
+            <p className="text-gray-400 text-[15px] sm:text-lg">
               Experience a new level of fitness with our premium facilities and
               expert guidance
             </p>
@@ -147,7 +146,7 @@ const Features = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-16 bg-gradient-to-r from-zinc-800/50 via-zinc-800/30 to-zinc-800/50 
-                     backdrop-blur-sm rounded-2xl p-8 text-center relative overflow-hidden"
+                     backdrop-blur-sm rounded-2xl px-4 py-8 sm:p-8 text-center relative overflow-hidden"
         >
           <div className="relative z-10">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4">
