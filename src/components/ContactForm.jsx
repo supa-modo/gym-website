@@ -50,19 +50,19 @@ const ContactForm = () => {
     {
       icon: FiClock,
       title: "Working Hours",
-      details: [
-        "Daily: 5:00 AM - 11:00 PM",
-        "Weekends: 6:00 AM - 10:00 PM",
-      ],
+      details: ["Daily: 5:00 AM - 11:00 PM", "Weekends: 6:00 AM - 10:00 PM"],
       color: "from-yellow-600 to-amber-600",
     },
   ];
 
   return (
-    <section id="contact" className="pt-24 pb-20 bg-secondary relative overflow-hidden">
+    <section
+      id="contact"
+      className="pt-24 pb-20 bg-secondary relative overflow-hidden"
+    >
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#FF0000,_transparent_50%)] opacity-5"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_55%)] opacity-5"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#FF0000,_transparent_50%)] opacity-5"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_#FF0000,_transparent_55%)] opacity-5"></div>
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -92,7 +92,9 @@ const ContactForm = () => {
             transition={{ duration: 0.5 }}
             className="bg-zinc-800/50 backdrop-blur-sm rounded-2xl p-6 sm:p-8"
           >
-            <h3 className="text-lg sm:text-xl font-semibold text-white mb-7">Send Us a Message</h3>
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-7">
+              Send Us a Message
+            </h3>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* Name Field */}
