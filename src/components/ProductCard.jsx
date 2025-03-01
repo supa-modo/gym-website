@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FiPlus, FiCheck } from "react-icons/fi";
+import { FiPlus, FiCheck, FiShoppingCart } from "react-icons/fi";
 import { useStore } from "../context/StoreContext.jsx";
 import ProductDetailsModal from "./ProductDetailsModal.jsx";
 
@@ -29,7 +29,7 @@ const ProductCard = ({ product }) => {
         onClick={() => setIsModalOpen(true)}
       >
         {/* Product Image */}
-        <div className="relative h-60 overflow-hidden">
+        <div className="relative h-40 sm:h-48 md:h-60 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 z-10"></div>
           <img
             src={product.image}
@@ -42,35 +42,35 @@ const ProductCard = ({ product }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleAddToCart}
-            className="absolute bottom-4 right-4 z-20 bg-primary text-white p-2 rounded-full 
+            className="absolute bottom-2 right-2 z-20 bg-primary text-white p-1.5 sm:p-2 rounded-full 
                        shadow-lg shadow-black/30 hover:bg-red-700 transition-colors"
             disabled={adding}
           >
             {adding ? (
-              <FiCheck className="w-5 h-5" />
+              <FiCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             ) : (
-              <FiPlus className="w-5 h-5" />
+              <FiPlus className="w-4 h-4 sm:w-5 sm:h-5" />
             )}
           </motion.button>
         </div>
 
         {/* Product Info */}
-        <div className="p-4 border-t border-gray-700 flex flex-col flex-grow">
+        <div className="p-3 sm:p-4 border-t border-gray-700 flex flex-col flex-grow">
           <div className="flex flex-col flex-grow">
-            <div className="items-start mb-2">
-              <h3 className="text-white font-bold text-lg leading-tight">
+            <div className="items-start mb-1 sm:mb-2">
+              <h3 className="text-white font-bold text-base sm:text-lg leading-tight">
                 {product.name}
               </h3>
             </div>
 
-            <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+            <p className="text-gray-400 text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2">
               {product.description}
             </p>
 
             {/* Size and Color Selection */}
-            <div className="flex justify-between space-x-3 mb-3">
+            <div className="flex justify-between space-x-2 sm:space-x-3 mb-2 sm:mb-3">
               {product.sizes && (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1 sm:gap-2 flex-wrap">
                   {product.sizes.map((size) => (
                     <button
                       key={size}
@@ -78,7 +78,7 @@ const ProductCard = ({ product }) => {
                         e.stopPropagation();
                         setSelectedSize(size);
                       }}
-                      className={`px-3 py-1 text-xs rounded-lg border ${
+                      className={`px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs rounded-lg border ${
                         selectedSize === size
                           ? "border-primary text-primary"
                           : "border-gray-400 text-gray-400"
@@ -129,7 +129,7 @@ const ProductCard = ({ product }) => {
               )}
             </div>
 
-            <div className="flex justify-between mt-auto items-center mb-4">
+            <div className="flex justify-between mt-auto items-center mb-2 sm:mb-4">
               <div>
                 {/* Rating */}
                 <div className="flex items-end gap-1">
@@ -137,7 +137,7 @@ const ProductCard = ({ product }) => {
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-4 h-4 ${
+                        className={`w-3 h-3 sm:w-4 sm:h-4 ${
                           i < Math.floor(product.rating)
                             ? "text-yellow-500"
                             : "text-gray-600"
@@ -149,36 +149,49 @@ const ProductCard = ({ product }) => {
                       </svg>
                     ))}
                   </div>
-                  <span className="text-gray-400 text-xs">
+                  <span className="text-gray-400 text-[10px] sm:text-xs">
                     {product.rating.toFixed(1)}
                   </span>
                 </div>
               </div>
 
               <div>
-                <span className="font-semibold text-gray-500 uppercase font-sans text-xs">
+                <span className="font-semibold text-gray-500 uppercase font-sans text-[10px] sm:text-xs">
                   KES.{" "}
                 </span>
-                <span className="font-semibold text-green-600 text-base sm:text-lg md:text-xl">
+                <span className="font-semibold text-green-600 text-sm sm:text-base md:text-lg">
                   {product.price.toFixed(2)}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* View Details Button */}
+          {/* Add to Cart Button */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={(e) => {
-              e.stopPropagation();
-              setIsModalOpen(true);
+              e.stopPropagation(); // Prevent opening the modal
+              handleAddToCart();
             }}
-            className="w-full bg-gradient-to-r from-zinc-700 to-zinc-800 text-white py-2 rounded-xl 
-                       font-medium text-sm hover:from-zinc-600 transition-all duration-300 
-                       border border-zinc-700 hover:border-zinc-600 mt-auto"
+            className={`w-full ${
+              adding ? "bg-green-600" : "bg-primary"
+            } text-white py-1.5 sm:py-2 rounded-lg 
+             font-medium text-xs sm:text-sm transition-all duration-300 
+             border border-transparent hover:border-white`}
+            disabled={adding}
           >
-            View Details
+            {adding ? (
+              <>
+                <FiCheck className="inline-block w-4 h-4 mr-2" />
+                Added
+              </>
+            ) : (
+              <>
+                <FiShoppingCart className="inline-block w-4 h-4 mr-2" />
+                Add to Cart
+              </>
+            )}
           </motion.button>
         </div>
       </motion.div>

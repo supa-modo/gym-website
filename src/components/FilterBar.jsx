@@ -17,7 +17,7 @@ const FilterBar = ({ activeCategory, setActiveCategory }) => {
           whileHover={{ y: -3 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setActiveCategory(category.id)}
-          className={`px-4 py-2 rounded-xl text-sm font-bold font-open transition-all duration-300 ${
+          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold font-open transition-all duration-300 ${
             activeCategory === category.id
               ? "bg-primary text-white"
               : "bg-zinc-800/70 text-gray-400 hover:bg-zinc-700"

@@ -15,6 +15,7 @@ import {
   FiInfo,
 } from "react-icons/fi";
 import { useStore } from "../context/StoreContext.jsx";
+import { PiHeartDuotone } from "react-icons/pi";
 
 const ProductDetailModal = ({ product, isOpen, onClose }) => {
   const { addToCart, cart, updateQuantity } = useStore();
@@ -176,7 +177,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                 </button>
 
                 <div className="md:w-1/2 bg-gradient-to-b from-zinc-800 to-zinc-900">
-                  <div className="relative h-80 sm:h-96 md:h-[31rem] bg-zinc-800 overflow-hidden group">
+                  <div className="relative h-60 sm:h-80 md:h-[31rem] bg-zinc-800 overflow-hidden group">
                     <motion.img
                       key={currentImageIndex}
                       initial={{ opacity: 0.8, scale: 0.95 }}
@@ -226,14 +227,14 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       ))}
                     </div>
                   </div>
-                  <div className="flex p-4 gap-2 overflow-x-auto ">
+                  <div className="flex p-3 gap-2 overflow-x-auto">
                     {productImages.map((img, index) => (
                       <motion.button
                         key={index}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => selectImage(index)}
-                        className={`w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden ${
+                        className={`w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 rounded-lg overflow-hidden ${
                           currentImageIndex === index
                             ? "ring-2 ring-primary"
                             : "ring-1 ring-zinc-700 hover:ring-zinc-500"
@@ -247,11 +248,11 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       </motion.button>
                     ))}
                   </div>
-                  <div className="px-4 pb-2 space-y-3 mt-2">
-                    <h3 className="text-lg font-semibold text-white">
+                  <div className="px-4 pb-2 space-y-3 mt-6">
+                    <h3 className="sm:text-lg font-semibold text-white">
                       Why Choose {product.name}?
                     </h3>
-                    <p className="text-sm text-gray-300">
+                    <p className="text-xs sm:text-sm text-gray-300">
                       Our {product.name} delivers unmatched performance and
                       comfort, whether you're hitting the gym or training at
                       home with 100% Satisfaction Guarantee.
@@ -259,9 +260,9 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                   </div>
                 </div>
 
-                <div className="md:w-1/2 p-4 sm:p-6 flex flex-col">
-                  <div className="border-b border-zinc-700/50 pb-4 mb-4">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight">
+                <div className="md:w-1/2 p-3 sm:p-6 flex flex-col">
+                  <div className="border-b border-zinc-700/50 pb-3 mb-3">
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
                       {product.name}
                     </h2>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
@@ -294,10 +295,10 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       )}
                     </div>
                     <div className="flex items-baseline">
-                      <span className="font-semibold text-gray-400 uppercase font-sans text-sm mr-1">
+                      <span className="font-semibold text-gray-400 uppercase font-sans text-xs sm:text-sm mr-1">
                         KES.
                       </span>
-                      <span className="font-bold text-green-500 text-3xl">
+                      <span className="font-bold text-green-500 text-2xl sm:text-3xl">
                         {product.price.toFixed(2)}
                       </span>
                       {product.id % 2 === 0 && (
@@ -313,7 +314,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                        className={`px-4 py-2 text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                           activeTab === tab
                             ? "text-primary border-b-2 border-primary"
                             : "text-gray-400 hover:text-white"
@@ -335,8 +336,8 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                         className="w-full"
                       >
                         {activeTab === "description" && (
-                          <div className="text-gray-300 space-y-4">
-                            <p>{product.description}</p>
+                          <div className="text-gray-300 space-y-4 text-sm md:text-base">
+                            <p >{product.description}</p>
                             <p>
                               Experience the premium quality and exceptional
                               performance that our {product.name} offers.
@@ -392,17 +393,17 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                                   <FiInfo className="mr-2 text-primary" />{" "}
                                   Material Information
                                 </h4>
-                                <ul className="space-y-1 text-gray-300 text-sm">
+                                <ul className="space-y-1 text-gray-300 text-xs">
                                   <li className="flex items-center">
-                                    <span className="w-3 h-3 bg-primary rounded-full mr-2"></span>
+                                    <span className="w-2 sm:w-3 h-2 sm:h-3 bg-primary rounded-full mr-2"></span>
                                     88% Polyester, 12% Elastane
                                   </li>
                                   <li className="flex items-center">
-                                    <span className="w-3 h-3 bg-primary rounded-full mr-2"></span>
+                                    <span className="w-2 sm:w-3 h-2 sm:h-3 bg-primary rounded-full mr-2"></span>
                                     Moisture-wicking fabric
                                   </li>
                                   <li className="flex items-center">
-                                    <span className="w-3 h-3 bg-primary rounded-full mr-2"></span>
+                                    <span className="w-2 sm:w-3 h-2 sm:h-3 bg-primary rounded-full mr-2"></span>
                                     Machine washable
                                   </li>
                                 </ul>
@@ -412,7 +413,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                         )}
 
                         {activeTab === "features" && (
-                          <div className="w-full">
+                          <div className="w-full text-sm sm:text-base">
                             <ul className="space-y-3">
                               {product.features.map((feature, index) => (
                                 <motion.li
@@ -606,25 +607,25 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                   </div>
 
                   {/* Product Options */}
-                  <div className="space-y-4 mt-auto pt-4 border-t border-zinc-700/50">
+                  <div className="space-y-3 mt-auto pt-3 border-t border-zinc-700/50">
                     {/* Size and Color Selection */}
-                    <div className="flex justify">
+                    <div className="flex gap-3">
                       {product.sizes && product.sizes.length > 0 && (
                         <div className="flex-1">
-                          <h4 className="text-white font-medium mb-2 flex items-center">
+                          <h4 className="text-white font-medium mb-1 sm:mb-2 flex items-center text-sm sm:text-base">
                             Size:
-                            <span className="ml-2 text-xs text-gray-400 bg-zinc-800 px-2 py-1 rounded-full">
+                            <span className="ml-2 text-xs text-gray-400 bg-zinc-800 px-3 py-1 rounded-lg">
                               {selectedSize}
                             </span>
                           </h4>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1 sm:gap-2">
                             {product.sizes.map((size) => (
                               <motion.button
                                 key={size}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setSelectedSize(size)}
-                                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                                className={`px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-lg transition-all duration-300 ${
                                   selectedSize === size
                                     ? "bg-primary text-white shadow-lg shadow-primary/20"
                                     : "bg-zinc-800 text-gray-400 hover:bg-zinc-700"
@@ -641,7 +642,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                         <div className="flex-1">
                           <h4 className="text-white font-medium mb-2 flex items-center">
                             Color:
-                            <span className="ml-2 text-xs text-gray-400 bg-zinc-800 px-2 py-1 rounded-full">
+                            <span className="ml-2 text-xs text-gray-400 bg-zinc-800 px-3 py-1 rounded-lg">
                               {getColorName(selectedColor)}
                             </span>
                           </h4>
@@ -667,7 +668,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                                     backgroundColor:
                                       colorMap[color]?.bg || "#777",
                                   }}
-                                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                                  className={`md:w-10 md:h-10 w-7 h-7  rounded-full flex items-center justify-center border-2 ${
                                     selectedColor === color
                                       ? "border-primary ring-1 ring-offset-zinc-900 ring-primary"
                                       : "border-zinc-700 hover:border-zinc-500"
@@ -685,7 +686,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                     </div>
 
                     {/* New Add to Cart Section */}
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex gap-3 mt-4">
                       {/* Quantity Selector */}
                       <div className="flex items-center bg-zinc-800 rounded-lg overflow-hidden">
                         <motion.button
@@ -693,11 +694,11 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                           whileTap={{ scale: 0.9 }}
                           onClick={decrementQuantity}
                           disabled={quantity === 1}
-                          className="p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
+                          className="p-2 sm:p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
                         >
-                          <FiMinus className="w-5 h-5" />
+                          <FiMinus className="w-4 h-4 sm:w-5 sm:h-5" />
                         </motion.button>
-                        <div className="w-16 text-center">
+                        <div className="w-10 sm:w-16 text-center">
                           <input
                             type="number"
                             min="1"
@@ -710,7 +711,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                               );
                               setQuantity(value);
                             }}
-                            className="w-full bg-transparent text-white text-center focus:outline-none"
+                            className="w-full bg-transparent text-white text-sm sm:text-base text-center focus:outline-none"
                           />
                         </div>
                         <motion.button
@@ -718,9 +719,9 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                           whileTap={{ scale: 0.9 }}
                           onClick={incrementQuantity}
                           disabled={quantity === 99}
-                          className="p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
+                          className="p-2 sm:p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
                         >
-                          <FiPlus className="w-5 h-5" />
+                          <FiPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                         </motion.button>
                       </div>
 
@@ -730,7 +731,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                         whileTap={{ scale: 0.98 }}
                         onClick={handleAddToCart}
                         disabled={adding}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-semibold text-lg transition-all ${
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition-all ${
                           isProductInCart
                             ? "bg-green-600/90 hover:bg-green-600 text-white"
                             : "bg-primary hover:bg-primary/90 text-white"
@@ -759,13 +760,13 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={toggleWishlist}
-                        className={`p-3 rounded-lg border ${
+                        className={`px-3 py-2 md:py-3 rounded-lg border ${
                           wishlist
                             ? "border-red-500 bg-red-500/10 text-red-500"
                             : "border-zinc-700 hover:border-zinc-600 text-gray-400 hover:text-white"
                         } transition-colors`}
                       >
-                        <FiHeart className="w-6 h-6" />
+                        <PiHeartDuotone className="w-5 h-5 sm:w-6 sm:h-6" />
                       </motion.button>
                     </div>
                   </div>

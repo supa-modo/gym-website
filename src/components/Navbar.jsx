@@ -10,7 +10,7 @@ const Navbar = () => {
 
   // Navigation array
   const navigation = [
-    { name: "Home", href: "/", type: "router" },
+    { name: "Home", href: "/", type: "scrollTop" },
     { name: "Classes", href: "classes", type: "scroll" },
     { name: "Store", href: "/store", type: "router" },
     { name: "Pricing", href: "pricing", type: "scroll" },
@@ -53,6 +53,19 @@ const Navbar = () => {
                 <RouterLink
                   key={item.name}
                   to={item.href}
+                  className="text-gray-300 hover:text-white relative inline-block transition-colors duration-300
+                    before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 
+                    before:bg-primary before:transition-all before:duration-300 hover:before:w-full"
+                >
+                  {item.name}
+                </RouterLink>
+              ) : item.type === "scrollTop" ? (
+                <RouterLink
+                  key={item.name}
+                  to="/"
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
                   className="text-gray-300 hover:text-white relative inline-block transition-colors duration-300
                     before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 
                     before:bg-primary before:transition-all before:duration-300 hover:before:w-full"
@@ -127,6 +140,19 @@ const Navbar = () => {
                 className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
                           rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
                 onClick={() => setIsMenuOpen(false)}
+              >
+                {item.name}
+              </RouterLink>
+            ) : item.type === "scrollTop" ? (
+              <RouterLink
+                key={item.name}
+                to="/"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
+                          rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
               >
                 {item.name}
               </RouterLink>

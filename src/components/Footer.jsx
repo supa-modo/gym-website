@@ -10,14 +10,15 @@ import {
 import { FiMail, FiPhone, FiMapPin, FiClock } from "react-icons/fi";
 import { IoFitnessOutline } from "react-icons/io5";
 import { BsArrowUpCircle } from "react-icons/bs";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer = () => {
   const quickLinks = [
-      { name: "Home", href: "/" },
-      { name: "Classes", href: "#classes" },
-      { name: "Store", href: "#" },
-      { name: "Pricing", href: "#pricing" },
-      { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/", type: "scrollTop" },
+    { name: "Classes", href: "classes", type: "scroll" },
+    { name: "Store", href: "/store", type: "router" },
+    { name: "Pricing", href: "pricing", type: "scroll" },
+    { name: "Contact", href: "contact", type: "scroll" },
   ];
 
   const programs = [
@@ -119,13 +120,42 @@ const Footer = () => {
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-primary text-sm transition-colors duration-300 flex items-center gap-2"
-                  >
-                    <span className="w-1 h-1 rounded-full bg-primary"></span>
-                    {link.name}
-                  </a>
+                  {link.type === "router" ? (
+                    <RouterLink
+                      to={link.href}
+                      className="text-gray-400 hover:text-primary text-sm transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-primary"></span>
+                      {link.name}
+                    </RouterLink>
+                  ) : link.type === "scrollTop" ? (
+                    <RouterLink
+                      to="/"
+                      onClick={() =>
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      }
+                      className="text-gray-400 hover:text-primary text-sm transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-primary"></span>
+                      {link.name}
+                    </RouterLink>
+                  ) : (
+                    <RouterLink
+                      to="/"
+                      onClick={() => {
+                        setTimeout(() => {
+                          const element = document.getElementById(link.href);
+                          if (element) {
+                            element.scrollIntoView({ behavior: "smooth" });
+                          }
+                        }, 100);
+                      }}
+                      className="text-gray-400 hover:text-primary text-sm transition-colors duration-300 flex items-center gap-2"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-primary"></span>
+                      {link.name}
+                    </RouterLink>
+                  )}
                 </motion.li>
               ))}
             </ul>
