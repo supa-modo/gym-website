@@ -7,7 +7,6 @@ import ProductCard from "./ProductCard";
 import FilterBar from "./FilterBar";
 import ShoppingCart from "./ShoppingCart";
 
-// Sample product data - in production, this would come from an API or backend
 
 // Main Store Component
 const Store = () => {

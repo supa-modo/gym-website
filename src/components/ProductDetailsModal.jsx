@@ -154,20 +154,20 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
           aria-modal="true"
         >
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onClose}
           />
 
-          <div className="flex items-center justify-center min-h-screen p-2 sm:p-4">
+          <div className="flex items-center justify-center min-h-screen p-2 sm:p-6">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", duration: 0.8 }}
-              style={{ maxHeight: "90vh" }}
+              style={{ maxHeight: "85vh" }}
               className="relative bg-gradient-to-b from-zinc-900 to-zinc-950 rounded-3xl max-w-7xl w-full mx-auto overflow-hidden shadow-2xl border border-zinc-800"
             >
-              <div className="flex flex-col md:flex-row h-[80vh] sm:h-[79vh] overflow-y-auto">
+              <div className="flex flex-col md:flex-row h-[80vh] sm:h-[78vh] overflow-y-auto">
                 <button
                   onClick={onClose}
                   className="absolute top-4 right-4 z-20 text-gray-400 hover:text-white transition-colors bg-zinc-800/70 rounded-full p-2 hover:bg-primary"
@@ -176,7 +176,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                 </button>
 
                 <div className="md:w-1/2 bg-gradient-to-b from-zinc-800 to-zinc-900">
-                  <div className="relative h-80 sm:h-96 md:h-[34rem] bg-zinc-800 overflow-hidden group">
+                  <div className="relative h-80 sm:h-96 md:h-[31rem] bg-zinc-800 overflow-hidden group">
                     <motion.img
                       key={currentImageIndex}
                       initial={{ opacity: 0.8, scale: 0.95 }}
@@ -186,7 +186,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-20 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                     <button
                       onClick={prevImage}
@@ -220,7 +220,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                           className={`w-2 h-2 rounded-full transition-all duration-300 ${
                             currentImageIndex === index
                               ? "bg-primary w-4"
-                              : "bg-gray-400/50 hover:bg-gray-300/70"
+                              : "bg-gray-400 hover:bg-gray-300/70"
                           }`}
                         />
                       ))}
@@ -684,87 +684,89 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       )}
                     </div>
 
-                    {/* Add to Cart Button with Quantity Controls */}
-                    <div className="flex items-center justify-between gap-4">
-                      <motion.div
-                        className={`w-full flex items-center justify-between rounded-xl overflow-hidden ${
-                          isProductInCart ? "bg-zinc-800" : "bg-primary"
-                        }`}
-                      >
+                    {/* New Add to Cart Section */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      {/* Quantity Selector */}
+                      <div className="flex items-center bg-zinc-800 rounded-lg overflow-hidden">
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => {
-                            if (isProductInCart) {
-                              decrementQuantity();
-                              updateQuantity(
-                                product.id,
-                                quantity - 1,
-                                selectedColor
-                              );
-                            }
-                          }}
-                          className={`p-3 ${
-                            isProductInCart
-                              ? "text-gray-400 hover:text-white"
-                              : "text-white"
-                          } hover:bg-zinc-700/20 transition-colors`}
+                          onClick={decrementQuantity}
+                          disabled={quantity === 1}
+                          className="p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
                         >
                           <FiMinus className="w-5 h-5" />
                         </motion.button>
-
-                        <div className="flex-1 text-center">
-                          {isProductInCart ? (
-                            <span className="text-white font-medium text-lg">
-                              {quantity} in Cart
-                            </span>
-                          ) : (
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={handleAddToCart}
-                              disabled={adding}
-                              className={`w-full py-3 font-semibold text-lg ${
-                                adding ? "cursor-not-allowed" : ""
-                              } text-white`}
-                            >
-                              {adding ? (
-                                <>
-                                  <FiCheck className="w-6 h-6 inline-block mr-2" />
-                                  Added to Cart
-                                </>
-                              ) : (
-                                <>
-                                  <FiShoppingCart className="w-6 h-6 inline-block mr-2" />
-                                  Add to Cart
-                                </>
-                              )}
-                            </motion.button>
-                          )}
+                        <div className="w-16 text-center">
+                          <input
+                            type="number"
+                            min="1"
+                            max="99"
+                            value={quantity}
+                            onChange={(e) => {
+                              const value = Math.min(
+                                Math.max(1, e.target.value),
+                                99
+                              );
+                              setQuantity(value);
+                            }}
+                            className="w-full bg-transparent text-white text-center focus:outline-none"
+                          />
                         </div>
-
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => {
-                            if (isProductInCart) {
-                              incrementQuantity();
-                              updateQuantity(
-                                product.id,
-                                quantity + 1,
-                                selectedColor
-                              );
-                            }
-                          }}
-                          className={`p-3 ${
-                            isProductInCart
-                              ? "text-gray-400 hover:text-white"
-                              : "text-white"
-                          } hover:bg-zinc-700/20 transition-colors`}
+                          onClick={incrementQuantity}
+                          disabled={quantity === 99}
+                          className="p-3 text-gray-400 hover:text-white disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
                         >
                           <FiPlus className="w-5 h-5" />
                         </motion.button>
-                      </motion.div>
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleAddToCart}
+                        disabled={adding}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-semibold text-lg transition-all ${
+                          isProductInCart
+                            ? "bg-green-600/90 hover:bg-green-600 text-white"
+                            : "bg-primary hover:bg-primary/90 text-white"
+                        } ${adding ? "cursor-not-allowed opacity-90" : ""}`}
+                      >
+                        {isProductInCart ? (
+                          <>
+                            <FiCheck className="w-6 h-6" />
+                            Added to Cart
+                          </>
+                        ) : adding ? (
+                          <>
+                            <FiCheck className="w-6 h-6" />
+                            Adding...
+                          </>
+                        ) : (
+                          <>
+                            <FiShoppingCart className="w-6 h-6" />
+                            Add to Cart
+                          </>
+                        )}
+                      </motion.button>
+
+                      {/* Wishlist Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={toggleWishlist}
+                        className={`p-3 rounded-lg border ${
+                          wishlist
+                            ? "border-red-500 bg-red-500/10 text-red-500"
+                            : "border-zinc-700 hover:border-zinc-600 text-gray-400 hover:text-white"
+                        } transition-colors`}
+                      >
+                        <FiHeart className="w-6 h-6" />
+                      </motion.button>
                     </div>
                   </div>
                 </div>
