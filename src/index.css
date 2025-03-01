@@ -17,3 +17,26 @@ body {
 .animate-on-scroll {
   transition: all 0.5s ease-out;
 }
+
+/* Custom scrollbar styles */
+/* For WebKit browsers like Chrome, Safari, and Edge */
+::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Semi-transparent track */
+
+  border-radius: 12px !important; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3); /* Darker semi-transparent thumb */
+  border-radius: 12px !important; /* Rounded corners */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 2, 2, 0.699) rgba(0, 0, 0, 0.021); /* Thumb and track colors */
+}

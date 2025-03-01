@@ -58,7 +58,7 @@ const ContactForm = () => {
   return (
     <section
       id="contact"
-      className="pt-24 pb-20 bg-secondary relative overflow-hidden"
+      className="pt-24 pb-20 bg-secondary/40 relative overflow-hidden"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#FF0000,_transparent_50%)] opacity-5"></div>

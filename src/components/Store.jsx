@@ -23,7 +23,7 @@ const Store = () => {
   return (
     <section
       id="store"
-      className="pt-32 pb-20 bg-secondary relative overflow-hidden"
+      className="pt-32 pb-20 bg-secondary/40 relative overflow-hidden"
     >
       {/* Animated Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#FF0000,_transparent_50%)] opacity-5"></div>

@@ -149,16 +149,21 @@ const Classes = () => {
   const activeClass = classes[activeIndex];
 
   return (
-    <section id="classes" className="pt-24 pb-20 bg-secondary relative overflow-hidden">
+    <section id="classes" className="pt-24 pb-20 bg-secondary/40 relative overflow-hidden">
       {/* Dynamic Background Pattern */}
-      <div
+      {/* <div
         className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from),_transparent_50%)] opacity-5"
         style={{ "--tw-gradient-from": activeClass.color.split(" ")[1] }}
       ></div>
       <div
         className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-from),_transparent_55%)] opacity-5"
         style={{ "--tw-gradient-from": activeClass.color.split(" ")[1] }}
-      ></div>
+      ></div> */}
+
+      
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#FF0000,_transparent_50%)] opacity-5"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_#FF0000,_transparent_55%)] opacity-5"></div>
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
