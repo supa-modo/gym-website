@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiShoppingCart, FiX, FiCheck } from "react-icons/fi";
 import { IoArrowForward } from "react-icons/io5";
@@ -7,11 +7,15 @@ import ProductCard from "./ProductCard";
 import FilterBar from "./FilterBar";
 import ShoppingCart from "./ShoppingCart";
 
-
 // Main Store Component
 const Store = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const { products, cart, isCartOpen, setIsCartOpen } = useStore();
+
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Filter products by category
   const filteredProducts =
@@ -22,11 +26,11 @@ const Store = () => {
   return (
     <section
       id="store"
-      className="pt-32 pb-20 bg-secondary/40 relative overflow-hidden"
+      className="pt-8 pb-20 bg-secondary relative overflow-hidden"
     >
-      {/* Animated Background */}
+      {/* Animated Background
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#FF0000,_transparent_50%)] opacity-5"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_55%)] opacity-5"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#FF0000,_transparent_55%)] opacity-5"></div> */}
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -41,7 +45,7 @@ const Store = () => {
             Elite Fitness Store
             <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary to-transparent"></div>
           </h2>
-          <p className="text-gray-400 text-[14px] sm:text-lg">
+          <p className="text-gray-400 text-[14px] sm:text-base">
             Premium supplements, apparel, and accessories to fuel your fitness
             journey
           </p>
@@ -115,12 +119,12 @@ const Store = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
         </motion.div>
 
-        {/* Cart Button (Desktop) */}
+        {/* Cart Button (All Screens) */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-8 right-8 z-40 bg-primary text-white rounded-full p-4 shadow-lg shadow-primary/30 hidden lg:flex items-center justify-center"
+          className="fixed bottom-8 right-8 z-40 bg-primary text-white rounded-full p-4 shadow-lg shadow-primary/30 flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}

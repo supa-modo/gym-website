@@ -149,19 +149,12 @@ const Classes = () => {
   const activeClass = classes[activeIndex];
 
   return (
-    <section id="classes" className="pt-24 pb-20 bg-secondary/40 relative overflow-hidden">
+    <section
+      id="classes"
+      className="pt-24 pb-20 bg-secondary/40 relative overflow-hidden"
+    >
       {/* Dynamic Background Pattern */}
-      {/* <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from),_transparent_50%)] opacity-5"
-        style={{ "--tw-gradient-from": activeClass.color.split(" ")[1] }}
-      ></div>
-      <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-from),_transparent_55%)] opacity-5"
-        style={{ "--tw-gradient-from": activeClass.color.split(" ")[1] }}
-      ></div> */}
 
-      
-      {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#FF0000,_transparent_50%)] opacity-5"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_#FF0000,_transparent_55%)] opacity-5"></div>
 
@@ -180,7 +173,8 @@ const Classes = () => {
           </h2>
           <p className="text-gray-400 text-[14px] sm:text-lg">
             Discover your perfect fitness journey with our diverse range of
-            expert-led classes. Swipe left or right below to browse through the programs we offer
+            expert-led classes. Swipe left or right below to browse through the
+            programs we offer
           </p>
         </motion.div>
 
@@ -199,7 +193,6 @@ const Classes = () => {
                   x: { type: "spring", stiffness: 100, damping: 30 },
                   opacity: { duration: 0.5 },
                 }}
-                
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={1}
@@ -274,7 +267,9 @@ const Classes = () => {
                       <h4 className="text-white text-sm md:text-base font-semibold mb-2 sm:mb-4">
                         About This Class
                       </h4>
-                      <p className="text-gray-400 text-sm md:text-base">{activeClass.description}</p>
+                      <p className="text-gray-400 text-sm md:text-base">
+                        {activeClass.description}
+                      </p>
                     </motion.div>
 
                     {/* Schedule */}

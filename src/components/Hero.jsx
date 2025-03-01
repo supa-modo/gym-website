@@ -6,6 +6,11 @@ import { FaXTwitter } from "react-icons/fa6";
 const Hero = () => {
   const [offset, setOffset] = useState(0);
 
+    // Scroll to top on component mount
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       setOffset(window.pageYOffset);
@@ -67,7 +72,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 mx-auto px-2 sm:px-6 lg:px-16 w-full">
+      <div className="relative z-20 mx-auto px-2 sm:px-6 lg:px-16 w-full pt-24">
         <div className="max-w-2xl ml-2 md:ml-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}

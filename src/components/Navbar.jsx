@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { Link as RouterLink } from "react-router-dom";
+import { Link as ScrollLink } from "react-scroll";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,11 +10,11 @@ const Navbar = () => {
 
   // Navigation array
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Classes", href: "#classes" },
-    { name: "Store", href: "#" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/", type: "router" },
+    { name: "Classes", href: "classes", type: "scroll" },
+    { name: "Store", href: "/store", type: "router" },
+    { name: "Pricing", href: "pricing", type: "scroll" },
+    { name: "Contact", href: "contact", type: "scroll" },
   ];
 
   useEffect(() => {
@@ -26,7 +28,7 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-black/70 backdrop-blur-lg py-2" : "bg-transparent py-4"
+        scrolled ? "bg-black/70 backdrop-blur-lg py-2" : "bg-transparent py-5"
       }`}
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,20 +47,38 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="flex space-x-10 font-nunito font-extrabold text-[17px]">
-              {navigation.map((item) => (
-                <a
+          <div className="hidden md:flex items-center space-x-10 font-nunito font-extrabold text-[17px]">
+            {navigation.map((item) =>
+              item.type === "router" ? (
+                <RouterLink
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className="text-gray-300 hover:text-white relative inline-block transition-colors duration-300
                     before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 
                     before:bg-primary before:transition-all before:duration-300 hover:before:w-full"
                 >
                   {item.name}
-                </a>
-              ))}
-            </div>
+                </RouterLink>
+              ) : (
+                <RouterLink
+                  key={item.name}
+                  to="/"
+                  onClick={() => {
+                    setTimeout(() => {
+                      const element = document.getElementById(item.href);
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 100);
+                  }}
+                  className="cursor-pointer text-gray-300 hover:text-white relative inline-block transition-colors duration-300
+                    before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-0.5 
+                    before:bg-primary before:transition-all before:duration-300 hover:before:w-full"
+                >
+                  {item.name}
+                </RouterLink>
+              )
+            )}
           </div>
 
           {/* Join Now Button */}
@@ -99,16 +119,37 @@ const Navbar = () => {
         }`}
       >
         <div className="px-4 pt-2 pb-3 space-y-1 bg-black/95 backdrop-blur-lg border-t border-gray-800">
-          {navigation.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
-                rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
-            >
-              {item.name}
-            </a>
-          ))}
+          {navigation.map((item) =>
+            item.type === "router" ? (
+              <RouterLink
+                key={item.name}
+                to={item.href}
+                className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
+                          rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.name}
+              </RouterLink>
+            ) : (
+              <RouterLink
+                key={item.name}
+                to="/"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setTimeout(() => {
+                    const element = document.getElementById(item.href);
+                    if (element) {
+                      element.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }, 100);
+                }}
+                className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-primary/20 
+                          rounded-lg transition-all duration-300 font-nunito font-extrabold text-lg"
+              >
+                {item.name}
+              </RouterLink>
+            )
+          )}
           <div className="px-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
