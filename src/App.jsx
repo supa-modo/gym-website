@@ -5,19 +5,19 @@ import Home from "./pages/Home";
 import Footer from "./components/Footer";
 import StoreSection from "./pages/Store";
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <div className="bg-secondary min-h-screen">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/store" element={<StoreSection />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+      <Router>
+        <div className="bg-secondary min-h-screen">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/store" element={<StoreSection />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
   );
-}
+};
 
 export default App;

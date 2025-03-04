@@ -18,6 +18,7 @@ import { IoArrowForward } from "react-icons/io5";
 import { SiVisa, SiMastercard, SiStripe } from "react-icons/si";
 import { FaMobile } from "react-icons/fa";
 import { useStore } from "../context/StoreContext.jsx";
+import { PiUserDuotone } from "react-icons/pi";
 
 const CheckoutModal = () => {
   const {
@@ -39,8 +40,7 @@ const CheckoutModal = () => {
   // Form state
   const [formData, setFormData] = useState({
     // Personal details
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     phone: "",
 
@@ -92,7 +92,7 @@ const CheckoutModal = () => {
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       // Randomly succeed or fail (80% success rate for demo)
       const isSuccessful = Math.random() < 0.8;
@@ -161,6 +161,26 @@ const CheckoutModal = () => {
     };
   }, [loading, success]);
 
+  // Add this useEffect hook
+  useEffect(() => {
+    if (isCheckoutOpen) {
+      // Disable background scrolling
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      // Re-enable background scrolling
+      document.body.style.overflow = "auto";
+      document.body.style.position = "static";
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = "auto";
+      document.body.style.position = "static";
+    };
+  }, [isCheckoutOpen]);
+
   if (!isCheckoutOpen) return null;
 
   // Conditionally render different steps
@@ -169,67 +189,52 @@ const CheckoutModal = () => {
       case 1:
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">Personal Details</h3>
+            <h3 className="text-xl font-bold text-white">Order Details</h3>
 
+            {/* Personal Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
-                  htmlFor="firstName"
+                  htmlFor="fullName"
                   className="block text-gray-400 text-sm mb-1"
                 >
-                  First Name
+                  Your Full Name
                 </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                  placeholder="John"
-                />
+                <div className="relative">
+                  <PiUserDuotone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
+                    placeholder="John"
+                  />
+                </div>
               </div>
 
               <div>
                 <label
-                  htmlFor="lastName"
+                  htmlFor="email"
                   className="block text-gray-400 text-sm mb-1"
                 >
-                  Last Name
+                  Email Address
                 </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-gray-400 text-sm mb-1"
-              >
-                Email Address
-              </label>
-              <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary"
-                  placeholder="your.email@example.com"
-                />
+                <div className="relative">
+                  <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
               </div>
             </div>
 
@@ -249,10 +254,273 @@ const CheckoutModal = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
                   placeholder="+254 7XX XXX XXX"
                 />
               </div>
+            </div>
+
+            {/* Delivery Method */}
+            <div className="pt-6 border-t border-zinc-700">
+              <h3 className="text-xl font-bold text-white mb-4">
+                Delivery Method
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                    deliveryMethod === "delivery"
+                      ? "border-primary bg-zinc-800"
+                      : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
+                  }`}
+                  onClick={() => handleDeliveryMethodChange("delivery")}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        deliveryMethod === "delivery"
+                          ? "border-primary"
+                          : "border-gray-500"
+                      }`}
+                    >
+                      {deliveryMethod === "delivery" && (
+                        <div className="w-3 h-3 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiTruck
+                        className={
+                          deliveryMethod === "delivery"
+                            ? "text-primary"
+                            : "text-gray-400"
+                        }
+                      />
+                      <span className="font-medium text-sm text-white">
+                        City / Home Delivery
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-[0.8rem] mt-2 ml-8">
+                    Get your items delivered to you. (Doorstep delivery - only
+                    within Nairobi).
+                  </p>
+                  <p className="text-primary text-sm font-medium mt-2 ml-8">
+                    $5.99 - Delivery fee
+                  </p>
+                </div>
+
+                <div
+                  className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                    deliveryMethod === "pickup"
+                      ? "border-primary bg-zinc-800"
+                      : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
+                  }`}
+                  onClick={() => handleDeliveryMethodChange("pickup")}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        deliveryMethod === "pickup"
+                          ? "border-primary"
+                          : "border-gray-500"
+                      }`}
+                    >
+                      {deliveryMethod === "pickup" && (
+                        <div className="w-3 h-3 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FiMapPin
+                        className={
+                          deliveryMethod === "pickup"
+                            ? "text-primary"
+                            : "text-gray-400"
+                        }
+                      />
+                      <span className="font-medium text-sm text-white">
+                        Store Pickup
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-[0.8rem] mt-2 ml-8">
+                    Pick up your items from any of our gym branches
+                  </p>
+                  <p className="text-green-500 text-sm font-medium mt-2 ml-8">
+                    Free
+                  </p>
+                </div>
+              </div>
+
+              {/* Delivery Address or Pickup Location */}
+              {deliveryMethod === "delivery" ? (
+                <div className="space-y-4 mt-6">
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-gray-400 text-sm mb-1"
+                    >
+                      Street Address
+                    </label>
+                    <div className="relative">
+                      <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                      <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        required={deliveryMethod === "delivery"}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
+                        placeholder="123 Main St, Apartment 4"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="city"
+                        className="block text-gray-400 text-sm mb-1"
+                      >
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        required={deliveryMethod === "delivery"}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
+                        placeholder="Nairobi"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="zipCode"
+                        className="block text-gray-400 text-sm mb-1"
+                      >
+                        Zip/Postal Code
+                      </label>
+                      <input
+                        type="text"
+                        id="zipCode"
+                        name="zipCode"
+                        value={formData.zipCode}
+                        onChange={handleChange}
+                        required={deliveryMethod === "delivery"}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary"
+                        placeholder="00100"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 mt-6">
+                  <h4 className="text-white font-medium">Pickup Location</h4>
+
+                  <div className="space-y-3">
+                    <div
+                      className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                        formData.pickupLocation === "main-branch"
+                          ? "border-primary bg-zinc-800"
+                          : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
+                      }`}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          pickupLocation: "main-branch",
+                        })
+                      }
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            formData.pickupLocation === "main-branch"
+                              ? "border-primary"
+                              : "border-gray-500"
+                          }`}
+                        >
+                          {formData.pickupLocation === "main-branch" && (
+                            <div className="w-2 h-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <span className="font-medium text-white">
+                          Main Branch - CBD
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-1 ml-7">
+                        123 Fitness Street, Central Business District
+                      </p>
+                    </div>
+
+                    <div
+                      className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                        formData.pickupLocation === "westlands"
+                          ? "border-primary bg-zinc-800"
+                          : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
+                      }`}
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          pickupLocation: "westlands",
+                        })
+                      }
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            formData.pickupLocation === "westlands"
+                              ? "border-primary"
+                              : "border-gray-500"
+                          }`}
+                        >
+                          {formData.pickupLocation === "westlands" && (
+                            <div className="w-2 h-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <span className="font-medium text-white">
+                          Westlands Branch
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-1 ml-7">
+                        456 Westlands Road, Westlands
+                      </p>
+                    </div>
+
+                    <div
+                      className={`border rounded-lg p-3 cursor-pointer transition-all ${
+                        formData.pickupLocation === "karen"
+                          ? "border-primary bg-zinc-800"
+                          : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
+                      }`}
+                      onClick={() =>
+                        setFormData({ ...formData, pickupLocation: "karen" })
+                      }
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            formData.pickupLocation === "karen"
+                              ? "border-primary"
+                              : "border-gray-500"
+                          }`}
+                        >
+                          {formData.pickupLocation === "karen" && (
+                            <div className="w-2 h-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <span className="font-medium text-white">
+                          Karen Branch
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-1 ml-7">
+                        789 Karen Road, Karen
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -260,268 +528,7 @@ const CheckoutModal = () => {
       case 2:
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">Delivery Method</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div
-                className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                  deliveryMethod === "delivery"
-                    ? "border-primary bg-zinc-800"
-                    : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
-                }`}
-                onClick={() => handleDeliveryMethodChange("delivery")}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      deliveryMethod === "delivery"
-                        ? "border-primary"
-                        : "border-gray-500"
-                    }`}
-                  >
-                    {deliveryMethod === "delivery" && (
-                      <div className="w-3 h-3 rounded-full bg-primary" />
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FiTruck
-                      className={
-                        deliveryMethod === "delivery"
-                          ? "text-primary"
-                          : "text-gray-400"
-                      }
-                    />
-                    <span className="font-medium text-white">
-                      Home Delivery
-                    </span>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm mt-2 ml-8">
-                  Get your items delivered to your doorstep
-                </p>
-                <p className="text-primary text-sm font-medium mt-2 ml-8">
-                  $5.99 - Delivery fee
-                </p>
-              </div>
-
-              <div
-                className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                  deliveryMethod === "pickup"
-                    ? "border-primary bg-zinc-800"
-                    : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
-                }`}
-                onClick={() => handleDeliveryMethodChange("pickup")}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      deliveryMethod === "pickup"
-                        ? "border-primary"
-                        : "border-gray-500"
-                    }`}
-                  >
-                    {deliveryMethod === "pickup" && (
-                      <div className="w-3 h-3 rounded-full bg-primary" />
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FiMapPin
-                      className={
-                        deliveryMethod === "pickup"
-                          ? "text-primary"
-                          : "text-gray-400"
-                      }
-                    />
-                    <span className="font-medium text-white">Store Pickup</span>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm mt-2 ml-8">
-                  Pick up your items from our store
-                </p>
-                <p className="text-green-500 text-sm font-medium mt-2 ml-8">
-                  Free
-                </p>
-              </div>
-            </div>
-
-            {deliveryMethod === "delivery" && (
-              <div className="space-y-4 mt-6 pt-6 border-t border-zinc-700">
-                <h4 className="text-white font-medium">Delivery Address</h4>
-
-                <div>
-                  <label
-                    htmlFor="address"
-                    className="block text-gray-400 text-sm mb-1"
-                  >
-                    Street Address
-                  </label>
-                  <div className="relative">
-                    <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      required={deliveryMethod === "delivery"}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:border-primary"
-                      placeholder="123 Main St, Apartment 4"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="city"
-                      className="block text-gray-400 text-sm mb-1"
-                    >
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      required={deliveryMethod === "delivery"}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                      placeholder="Nairobi"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="zipCode"
-                      className="block text-gray-400 text-sm mb-1"
-                    >
-                      Zip/Postal Code
-                    </label>
-                    <input
-                      type="text"
-                      id="zipCode"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleChange}
-                      required={deliveryMethod === "delivery"}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary"
-                      placeholder="00100"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {deliveryMethod === "pickup" && (
-              <div className="space-y-4 mt-6 pt-6 border-t border-zinc-700">
-                <h4 className="text-white font-medium">Pickup Location</h4>
-
-                <div className="space-y-3">
-                  <div
-                    className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                      formData.pickupLocation === "main-branch"
-                        ? "border-primary bg-zinc-800"
-                        : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
-                    }`}
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        pickupLocation: "main-branch",
-                      })
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          formData.pickupLocation === "main-branch"
-                            ? "border-primary"
-                            : "border-gray-500"
-                        }`}
-                      >
-                        {formData.pickupLocation === "main-branch" && (
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                        )}
-                      </div>
-                      <span className="font-medium text-white">
-                        Main Branch - CBD
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-xs mt-1 ml-7">
-                      123 Fitness Street, Central Business District
-                    </p>
-                  </div>
-
-                  <div
-                    className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                      formData.pickupLocation === "westlands"
-                        ? "border-primary bg-zinc-800"
-                        : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
-                    }`}
-                    onClick={() =>
-                      setFormData({ ...formData, pickupLocation: "westlands" })
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          formData.pickupLocation === "westlands"
-                            ? "border-primary"
-                            : "border-gray-500"
-                        }`}
-                      >
-                        {formData.pickupLocation === "westlands" && (
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                        )}
-                      </div>
-                      <span className="font-medium text-white">
-                        Westlands Branch
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-xs mt-1 ml-7">
-                      456 Westlands Road, Westlands
-                    </p>
-                  </div>
-
-                  <div
-                    className={`border rounded-lg p-3 cursor-pointer transition-all ${
-                      formData.pickupLocation === "karen"
-                        ? "border-primary bg-zinc-800"
-                        : "border-zinc-700 bg-zinc-800/50 hover:border-gray-500"
-                    }`}
-                    onClick={() =>
-                      setFormData({ ...formData, pickupLocation: "karen" })
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          formData.pickupLocation === "karen"
-                            ? "border-primary"
-                            : "border-gray-500"
-                        }`}
-                      >
-                        {formData.pickupLocation === "karen" && (
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                        )}
-                      </div>
-                      <span className="font-medium text-white">
-                        Karen Branch
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-xs mt-1 ml-7">
-                      789 Karen Road, Karen
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">Payment Method</h3>
+            <h3 className="text-xl font-bold text-white">Payment Details</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div
@@ -598,7 +605,7 @@ const CheckoutModal = () => {
                   </div>
                 </div>
                 <p className="text-gray-400 text-sm mt-2 ml-8">
-                  Pay directly with your M-Pesa account
+                  Pay directly from your phone through Safaricom's M-Pesa
                 </p>
               </div>
             </div>
@@ -726,12 +733,13 @@ const CheckoutModal = () => {
           </div>
         );
 
-      case 4:
+      case 3:
         return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-white">Order Summary</h3>
+          <div className="space-y-5">
+            <h3 className="text-xl font-bold text-white">Order Preview</h3>
 
-            <div className="max-h-48 overflow-y-auto pr-2 space-y-3">
+            {/* Items Ordered */}
+            <div className="max-h-56 overflow-y-auto pr-2  border-b border-zinc-800 pb-3 space-y-3">
               {cart.map((item) => (
                 <div
                   key={`${item.id}-${item.color}`}
@@ -786,45 +794,16 @@ const CheckoutModal = () => {
               ))}
             </div>
 
-            <div className="space-y-2 py-4 border-t border-b border-zinc-700">
-              <div className="flex justify-between text-gray-400">
-                <span>Subtotal</span>
-                <span className="text-white">${cartTotal.toFixed(2)}</span>
-              </div>
-
-              <div className="flex justify-between text-gray-400">
-                <span>Delivery Fee</span>
-                <span
-                  className={
-                    deliveryMethod === "pickup"
-                      ? "text-green-500"
-                      : "text-white"
-                  }
-                >
-                  {deliveryMethod === "pickup"
-                    ? "Free"
-                    : `$${deliveryFee.toFixed(2)}`}
-                </span>
-              </div>
-
-              <div className="flex justify-between text-white font-bold mt-4">
-                <span>Total</span>
-                <span className="text-primary">
-                  ${totalWithDelivery.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
+            {/* Personal Information */}
+            <div className="space-y-3">
               <h4 className="text-white font-medium">Personal Information</h4>
               <div className="bg-zinc-800/50 rounded-lg p-3">
-                <p className="text-white">
-                  {formData.firstName} {formData.lastName}
-                </p>
+                <p className="text-white">{formData.fullName}</p>
                 <p className="text-gray-400 text-sm">{formData.email}</p>
                 <p className="text-gray-400 text-sm">{formData.phone}</p>
               </div>
 
+              {/* Delivery/Pickup Information */}
               <h4 className="text-white font-medium">
                 {deliveryMethod === "delivery"
                   ? "Delivery Address"
@@ -849,6 +828,7 @@ const CheckoutModal = () => {
                 )}
               </div>
 
+              {/* Payment Information */}
               <h4 className="text-white font-medium">Payment Method</h4>
               <div className="bg-zinc-800/50 rounded-lg p-3">
                 {paymentMethod === "card" ? (
@@ -887,7 +867,7 @@ const CheckoutModal = () => {
       />
 
       {/* Modal Content */}
-      <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-zinc-900 shadow-xl">
+      <div className="absolute right-0 top-0 bottom-0 w-full max-w-md md:max-w-xl bg-zinc-900 shadow-xl overflow-y-auto">
         <motion.div
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
@@ -935,7 +915,7 @@ const CheckoutModal = () => {
                       Back
                     </button>
                   )}
-                  <div className="text-gray-400 text-sm">Step {step} of 4</div>
+                  <div className="text-gray-400 text-sm">Step {step} of 3</div>
                 </div>
 
                 {/* Render Current Step */}
@@ -953,8 +933,15 @@ const CheckoutModal = () => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    type={step === 4 ? "submit" : "button"}
-                    onClick={step === 4 ? null : nextStep}
+                    type={step === 3 ? "submit" : "button"}
+                    onClick={
+                      step === 3
+                        ? undefined
+                        : (e) => {
+                            e.preventDefault();
+                            nextStep();
+                          }
+                    }
                     disabled={loading}
                     className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
                   >
@@ -963,9 +950,9 @@ const CheckoutModal = () => {
                         Processing...
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       </>
-                    ) : step === 4 ? (
+                    ) : step === 3 ? (
                       <>
-                        Complete Order
+                        Confirm Payment
                         <FiCheck className="w-5 h-5" />
                       </>
                     ) : (

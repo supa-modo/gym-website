@@ -18,6 +18,7 @@ export const StoreProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Load cart from local storage on component mount
   useEffect(() => {
@@ -27,7 +28,7 @@ export const StoreProvider = ({ children }) => {
     }
   }, []);
 
-  // Save cart to local storage whenever it changes
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("gymCart", JSON.stringify(cart));
   }, [cart]);
@@ -86,16 +87,6 @@ export const StoreProvider = ({ children }) => {
     setCart([]);
   };
 
-  // Checkout handler
-  const handleCheckout = () => {
-    setOrderComplete(true);
-    clearCart();
-    setTimeout(() => {
-      setOrderComplete(false);
-      setIsCartOpen(false);
-    }, 5000);
-  };
-
   return (
     <StoreContext.Provider
       value={{
@@ -109,7 +100,8 @@ export const StoreProvider = ({ children }) => {
         isCartOpen,
         setIsCartOpen,
         orderComplete,
-        handleCheckout,
+        isCheckoutOpen,
+        setIsCheckoutOpen,
       }}
     >
       {children}
