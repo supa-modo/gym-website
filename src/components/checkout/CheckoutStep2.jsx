@@ -78,13 +78,10 @@ const CheckoutStep2 = ({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <img src="/mpesa.png" alt="mpesa-logo"  className={ 
-                  paymentMethod === "mpesa" ? "text-primary" : "text-gray-400"
-                }/>
-              <FaMobile
-                className={
-                  paymentMethod === "mpesa" ? "text-primary" : "text-gray-400"
-                }
+              <img
+                src="/mpesa.png"
+                alt="M-Pesa"
+                className="w-6 h-6 object-contain"
               />
               <span className="font-medium text-white">Lipa na M-Pesa</span>
             </div>

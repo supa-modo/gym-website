@@ -24,7 +24,7 @@ const ProductCard = ({ product }) => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.7 }}
         className="group relative bg-zinc-800/70 backdrop-blur-sm rounded-2xl overflow-hidden flex flex-col h-full cursor-pointer"
         onClick={() => setIsModalOpen(true)}
       >

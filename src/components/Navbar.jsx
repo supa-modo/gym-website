@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
 import JoinNowModal from "./Register";
+import BlankModal from "./BlankModal";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBlankModalOpen, setIsBlankModalOpen] = useState(false);
 
   // Navigation array
   const navigation = [
@@ -101,7 +103,7 @@ const Navbar = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsBlankModalOpen(true)}
                 className="bg-primary text-white px-8 py-3 rounded-xl font-extrabold font-nunito 
                             hover:bg-red-700 transition-colors shadow-lg shadow-primary/20 
                             hover:shadow-primary/40"
@@ -183,7 +185,7 @@ const Navbar = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsBlankModalOpen(true)}
                 className="w-full mt-2 bg-primary text-white px-8 py-2 rounded-xl font-extrabold 
             font-nunito transition-all duration-300 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20"
               >
@@ -194,10 +196,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Add the modal component */}
-      <JoinNowModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      {/* Add the blank modal component */}
+      <BlankModal
+        isOpen={isBlankModalOpen}
+        onClose={() => setIsBlankModalOpen(false)}
       />
     </>
   );

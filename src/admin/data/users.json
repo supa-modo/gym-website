@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "profilePicture": null,
+      "createdAt": "2023-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "password": "password123",
+      "role": "admin",
+      "profilePicture": null,
+      "createdAt": "2023-01-02T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "password": "password123",
+      "role": "member",
+      "profilePicture": null,
+      "createdAt": "2023-01-03T00:00:00Z"
+    }
+  ]
+}
