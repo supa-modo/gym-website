@@ -60,35 +60,26 @@ const UserForm = () => {
       try {
         setIsFetching(true);
         setError(null);
+        const response = await userAPI.getById(id);
+        const user = response.data;
 
-        // In a real app, you would fetch data from your API
-        // const response = await userAPI.getById(id);
-        // const user = response.data;
+        setFormData({
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          phone: user.phone || "",
+          status: user.status || "active",
+          password: "",
+          confirmPassword: "",
+        });
 
-        // Simulate API call
-        setTimeout(() => {
-          // Mock user data
-          const user = sampleUser;
-
-          setFormData({
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            phone: user.phone || "",
-            status: user.status,
-            password: "",
-            confirmPassword: "",
-          });
-
-          if (user.profilePicture) {
-            setProfileImagePreview(user.profilePicture);
-          }
-
-          setIsFetching(false);
-        }, 500);
+        if (user.profilePicture) {
+          setProfileImagePreview(user.profilePicture);
+        }
       } catch (err) {
         console.error("Error fetching user:", err);
         setError("Failed to fetch user data. Please try again.");
+      } finally {
         setIsFetching(false);
       }
     };
@@ -202,7 +193,6 @@ const UserForm = () => {
       setError(null);
       setSuccess(null);
 
-      // Prepare data for API
       const userData = {
         name: formData.name,
         email: formData.email,
@@ -215,35 +205,25 @@ const UserForm = () => {
         userData.password = formData.password;
       }
 
-      // In a real app, you would upload the image and then save the user
-      // if (profileImage) {
-      //   const formData = new FormData();
-      //   formData.append('image', profileImage);
-      //   const uploadResponse = await axios.post('/api/upload', formData);
-      //   userData.profilePicture = uploadResponse.data.imageUrl;
-      // }
-
-      // Then save the user
-      // if (isEditMode) {
-      //   await userAPI.update(id, userData);
-      // } else {
-      //   await userAPI.create(userData);
-      // }
-
-      // Simulate API call
-      setTimeout(() => {
-        setIsLoading(false);
-        setSuccess(
-          isEditMode
-            ? "User updated successfully!"
-            : "User created successfully!"
+      if (profileImage) {
+        const uploadResponse = await userAPI.uploadProfilePicture(
+          id,
+          profileImage
         );
+        userData.profilePicture = uploadResponse.imageUrl;
+      }
 
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate("/admin/users");
-        }, 1500);
-      }, 1000);
+      if (isEditMode) {
+        await userAPI.update(id, userData);
+        setSuccess("User updated successfully!");
+      } else {
+        await userAPI.create(userData);
+        setSuccess("User created successfully!");
+      }
+
+      setTimeout(() => {
+        navigate("/admin/users");
+      }, 1500);
     } catch (err) {
       console.error("Error saving user:", err);
       setError(
@@ -251,6 +231,7 @@ const UserForm = () => {
           ? "Failed to update user. Please try again."
           : "Failed to create user. Please try again."
       );
+    } finally {
       setIsLoading(false);
     }
   };
@@ -577,7 +558,7 @@ const UserForm = () => {
             <Link to="/admin/users">
               <button
                 type="button"
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                className="px-6 py-2 bg-zinc-700 text-white font-semibold text-sm md:text-base rounded-lg hover:bg-zinc-600 transition-colors"
               >
                 Cancel
               </button>
@@ -588,7 +569,7 @@ const UserForm = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-2 rounded-lg text-white flex items-center ${
+              className={`px-6 py-2 rounded-lg text-white text-sm md:text-base font-semibold flex items-center ${
                 isLoading ? "bg-primary/70" : "bg-primary hover:bg-red-700"
               } transition-colors shadow-lg shadow-primary/20`}
             >
@@ -599,7 +580,7 @@ const UserForm = () => {
                 </>
               ) : (
                 <>
-                  <FiSave className="w-4 h-4 mr-2" />
+                  <FiSave className="w-5 h-5 mr-2" />
                   {isEditMode ? "Update User" : "Create User"}
                 </>
               )}

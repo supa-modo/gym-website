@@ -103,6 +103,10 @@ const Users = () => {
 
   const totalPages = Math.ceil(totalUsers / itemsPerPage);
 
+  // Add these calculations before the return statement
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalUsers);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -192,25 +196,26 @@ const Users = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-zinc-700/30">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Phone No.
                 </th>
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Stripe ID
-                </th> */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Joined Date
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-4 py-5 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -219,22 +224,25 @@ const Users = () => {
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-32 animate-pulse"></div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-16 animate-pulse"></div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3 whitespace-nowrap">
+                      <div className="h-4 bg-zinc-700 rounded w-16 animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <td className="px-6 py-3 whitespace-nowrap text-right">
                       <div className="h-4 bg-zinc-700 rounded w-20 ml-auto animate-pulse"></div>
                     </td>
                   </tr>
@@ -242,7 +250,7 @@ const Users = () => {
               ) : users.length > 0 ? (
                 users.map((user) => (
                   <tr key={user.id} className="hover:bg-zinc-700/20">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3.5 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-8 h-8 rounded-full text-sm px-5 bg-zinc-700 flex items-center justify-center text-white font-medium">
                           {user.name
@@ -258,10 +266,10 @@ const Users = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3.5 whitespace-nowrap">
                       <div className="text-sm text-gray-400">{user.email}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-3.5 whitespace-nowrap">
                       <span
                         className={`px-4 py-1 text-xs rounded-lg ${
                           user.role === "admin"
@@ -274,26 +282,27 @@ const Users = () => {
                         {user.role}
                       </span>
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
+
+                    <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-400">
+                      {user.phone || "Not Provided"}
+                    </td>
+                    <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-400">
+                      {formatDate(user.createdAt)}
+                    </td>
+
+                    <td className="px-6 py-3.5 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-4 py-1 text-xs rounded-lg ${
                           user.status === "active"
                             ? "bg-green-500/10 text-green-500"
                             : "bg-red-500/10 text-red-500"
                         }`}
                       >
-                         //TODO: To later add status field in user model 
                         {user.status || "active"}
                       </span>
-                    </td> */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                      {user.phone || "Not Provided"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                      {formatDate(user.createdAt)}
                     </td>
 
-                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-4 py-3.5 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-6">
                         <button
                           onClick={() => navigate(`/admin/users/${user.id}`)}
@@ -330,7 +339,7 @@ const Users = () => {
                 <tr>
                   <td
                     colSpan="6"
-                    className="px-6 py-4 whitespace-nowrap text-center text-gray-400"
+                    className="px-6 py-3.5 whitespace-nowrap text-center text-gray-400"
                   >
                     No users found.
                   </td>
@@ -341,26 +350,75 @@ const Users = () => {
         </div>
       </div>
 
-      <div className="flex justify-center items-center space-x-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-zinc-700 text-white rounded-md disabled:opacity-50"
-        >
-          <FiChevronLeft />
-        </button>
-        <span className="text-primary">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-zinc-700 text-white rounded-md disabled:opacity-50"
-        >
-          <FiChevronRight />
-        </button>
+      <div className="px-6 py-3 flex items-center justify-between border-t border-zinc-700">
+        <div className="text-sm text-gray-400">
+          Showing{" "}
+          <span className="font-medium text-white">{startIndex + 1}</span> to{" "}
+          <span className="font-medium text-white">{endIndex}</span> of{" "}
+          <span className="font-medium text-white">{totalUsers}</span> users
+        </div>
+
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-lg text-sm ${
+              currentPage === 1
+                ? "bg-zinc-700/30 text-gray-500 cursor-not-allowed"
+                : "bg-zinc-700 text-white hover:bg-zinc-600 transition-colors"
+            }`}
+          >
+            <FiChevronLeft className="w-4 h-4" />
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, index) => {
+            const pageNumber = index + 1;
+            // Show current page, first page, last page, and pages around current
+            if (
+              pageNumber === 1 ||
+              pageNumber === totalPages ||
+              (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+            ) {
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className={`px-3 py-1 rounded-lg text-sm ${
+                    currentPage === pageNumber
+                      ? "bg-primary text-white"
+                      : "bg-zinc-700 text-white hover:bg-zinc-600 transition-colors"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            } else if (
+              (pageNumber === currentPage - 2 && currentPage > 3) ||
+              (pageNumber === currentPage + 2 && currentPage < totalPages - 2)
+            ) {
+              return (
+                <span key={pageNumber} className="px-3 py-1 text-gray-400">
+                  ...
+                </span>
+              );
+            }
+            return null;
+          })}
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded-lg text-sm ${
+              currentPage === totalPages
+                ? "bg-zinc-700/30 text-gray-500 cursor-not-allowed"
+                : "bg-zinc-700 text-white hover:bg-zinc-600 transition-colors"
+            }`}
+          >
+            <FiChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {isDeleteModalOpen && (

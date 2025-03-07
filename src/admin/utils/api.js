@@ -15,11 +15,9 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("adminToken");
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)
@@ -57,23 +55,6 @@ export const userAPI = {
   update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
   getSubscriptions: (userId) => api.get(`/users/${userId}/subscriptions`),
-};
-
-// Membership Plans API
-export const planAPI = {
-  getAll: () => api.get("/membership/plans"),
-  getById: (id) => api.get(`/membership/plans/${id}`),
-  create: (data) => api.post("/membership/plans", data),
-  update: (id, data) => api.patch(`/membership/plans/${id}`, data),
-  delete: (id) => api.delete(`/membership/plans/${id}`),
-};
-
-// Subscriptions API
-export const subscriptionAPI = {
-  getAll: () => api.get("/membership/admin/subscriptions"),
-  getById: (id) => api.get(`/membership/subscriptions/${id}`),
-  cancel: (id) => api.patch(`/membership/subscriptions/${id}/cancel`),
-  create: (data) => api.post("/membership/subscribe", data),
 };
 
 // Products API

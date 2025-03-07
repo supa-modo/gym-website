@@ -13,57 +13,8 @@ import {
   FiRefreshCw,
   FiMail,
 } from "react-icons/fi";
-import { subscriptionAPI } from "../utils/api";
-
-// Sample subscription data
-const sampleSubscription = {
-  id: 1,
-  user: {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-  },
-  plan: {
-    id: 2,
-    name: "Premium Monthly",
-    price: 49.99,
-    duration: 1,
-    description:
-      "Full access to all gym facilities, classes, and premium equipment.",
-  },
-  startDate: "2023-05-01T10:30:00Z",
-  endDate: "2023-06-01T10:30:00Z",
-  renewalDate: "2023-06-01T10:30:00Z",
-  status: "active",
-  paymentMethod: "Credit Card",
-  stripeSubscriptionId: "sub_1234567890",
-  payments: [
-    {
-      id: 101,
-      amount: 49.99,
-      status: "completed",
-      paymentMethod: "Credit Card",
-      date: "2023-05-01T10:30:00Z",
-    },
-    {
-      id: 102,
-      amount: 49.99,
-      status: "completed",
-      paymentMethod: "Credit Card",
-      date: "2023-04-01T10:30:00Z",
-    },
-    {
-      id: 103,
-      amount: 49.99,
-      status: "completed",
-      paymentMethod: "Credit Card",
-      date: "2023-03-01T10:30:00Z",
-    },
-  ],
-  createdAt: "2023-02-01T10:30:00Z",
-  updatedAt: "2023-05-01T10:30:00Z",
-};
+import subscriptionAPI from "../utils//subscriptionAPI";
+import formatDate from "../utils/dateFormatter";
 
 // Status options
 const statusOptions = [
@@ -112,19 +63,19 @@ const SubscriptionDetails = () => {
       try {
         setIsLoading(true);
         setError(null);
+        const response = await subscriptionAPI.getById(id);
 
-        // In a real app, you would fetch data from your API
-        // const response = await subscriptionAPI.getById(id);
-        // setSubscription(response.data);
+        // Ensure payments array exists
+        const subscriptionData = {
+          ...response,
+          payments: response.payments || [], // Default to empty array if payments is undefined
+        };
 
-        // Simulate API call
-        setTimeout(() => {
-          setSubscription(sampleSubscription);
-          setIsLoading(false);
-        }, 500);
+        setSubscription(subscriptionData);
       } catch (err) {
         console.error("Error fetching subscription:", err);
         setError("Failed to fetch subscription details. Please try again.");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -138,30 +89,13 @@ const SubscriptionDetails = () => {
       setIsUpdating(true);
       setError(null);
       setSuccess(null);
-
-      // In a real app, you would cancel the subscription via API
-      // await subscriptionAPI.cancel(id);
-
-      // Simulate API call
-      setTimeout(() => {
-        setSubscription((prev) => ({
-          ...prev,
-          status: "canceled",
-          updatedAt: new Date().toISOString(),
-        }));
-
-        setIsUpdating(false);
-        setShowCancelModal(false);
-        setSuccess("Subscription canceled successfully!");
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-      }, 1000);
+      await subscriptionAPI.cancel(id);
+      setSubscription((prev) => ({ ...prev, status: "cancelled" }));
+      setSuccess("Subscription canceled successfully!");
     } catch (err) {
       console.error("Error canceling subscription:", err);
       setError("Failed to cancel subscription. Please try again.");
+    } finally {
       setIsUpdating(false);
       setShowCancelModal(false);
     }
@@ -173,39 +107,24 @@ const SubscriptionDetails = () => {
       setIsUpdating(true);
       setError(null);
       setSuccess(null);
-
-      // In a real app, you would extend the subscription via API
-      // await subscriptionAPI.extend(id, { months: extensionMonths });
-
-      // Simulate API call
-      setTimeout(() => {
-        const currentEndDate = new Date(subscription.endDate);
-        const newEndDate = new Date(currentEndDate);
-        newEndDate.setMonth(currentEndDate.getMonth() + extensionMonths);
-
-        setSubscription((prev) => ({
-          ...prev,
-          endDate: newEndDate.toISOString(),
-          renewalDate: newEndDate.toISOString(),
-          updatedAt: new Date().toISOString(),
-        }));
-
-        setIsUpdating(false);
-        setShowExtendModal(false);
-        setSuccess(
-          `Subscription extended by ${extensionMonths} month${
-            extensionMonths > 1 ? "s" : ""
-          }!`
-        );
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-      }, 1000);
+      await subscriptionAPI.extend(id, extensionMonths);
+      setSubscription((prev) => ({
+        ...prev,
+        endDate: new Date(
+          new Date(prev.endDate).setMonth(
+            new Date(prev.endDate).getMonth() + extensionMonths
+          )
+        ).toISOString(),
+      }));
+      setSuccess(
+        `Subscription extended by ${extensionMonths} month${
+          extensionMonths > 1 ? "s" : ""
+        }!`
+      );
     } catch (err) {
       console.error("Error extending subscription:", err);
       setError("Failed to extend subscription. Please try again.");
+    } finally {
       setIsUpdating(false);
       setShowExtendModal(false);
     }
@@ -219,16 +138,6 @@ const SubscriptionDetails = () => {
     setTimeout(() => {
       setSuccess(null);
     }, 3000);
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(date);
   };
 
   // Format currency
@@ -434,55 +343,66 @@ const SubscriptionDetails = () => {
                     Payment History
                   </h3>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="bg-zinc-700/30">
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                            Amount
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                            Method
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-zinc-700">
-                        {subscription.payments.map((payment) => (
-                          <tr key={payment.id} className="hover:bg-zinc-700/20">
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
-                              {formatDate(payment.date)}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
-                              {formatCurrency(payment.amount)}
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
-                              <span
-                                className={`px-2 py-1 text-xs rounded-full ${
-                                  payment.status === "completed"
-                                    ? "bg-green-500/10 text-green-500"
-                                    : payment.status === "pending"
-                                    ? "bg-yellow-500/10 text-yellow-500"
-                                    : "bg-red-500/10 text-red-500"
-                                }`}
-                              >
-                                {payment.status.charAt(0).toUpperCase() +
-                                  payment.status.slice(1)}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
-                              {payment.paymentMethod}
-                            </td>
+                  {subscription.payments.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-zinc-700/30">
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Date
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Amount
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Status
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Method
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-zinc-700">
+                          {subscription.payments.map((payment) => (
+                            <tr
+                              key={payment.id}
+                              className="hover:bg-zinc-700/20"
+                            >
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
+                                {formatDate(payment.date)}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
+                                {formatCurrency(payment.amount)}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <span
+                                  className={`px-2 py-1 text-xs rounded-full ${
+                                    payment.status === "completed"
+                                      ? "bg-green-500/10 text-green-500"
+                                      : payment.status === "pending"
+                                      ? "bg-yellow-500/10 text-yellow-500"
+                                      : "bg-red-500/10 text-red-500"
+                                  }`}
+                                >
+                                  {payment.status.charAt(0).toUpperCase() +
+                                    payment.status.slice(1)}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                                {payment.paymentMethod}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="bg-zinc-700/30 p-4 rounded-lg">
+                      <p className="text-gray-400 text-sm">
+                        No payment history found
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

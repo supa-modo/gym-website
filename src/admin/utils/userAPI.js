@@ -6,7 +6,15 @@ const userAPI = {
   // Get all users
   getAll: async (params) => {
     try {
-      const response = await axios.get(API_BASE_URL, { params });
+      const response = await axios.get(API_BASE_URL, {
+        params: {
+          page: params.page,
+          limit: params.limit,
+          search: params.search,
+          role: params.role,
+          status: params.status,
+        },
+      });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

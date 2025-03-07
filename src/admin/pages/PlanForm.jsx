@@ -9,7 +9,7 @@ import {
   FiClock,
   FiCheck,
 } from "react-icons/fi";
-import { planAPI } from "../utils/api";
+import planAPI from "../utils/planAPI";
 
 // Sample plan data
 const samplePlan = {
@@ -50,28 +50,18 @@ const PlanForm = () => {
       try {
         setIsFetching(true);
         setError(null);
-
-        // In a real app, you would fetch data from your API
-        // const response = await planAPI.getById(id);
-        // const plan = response.data;
-
-        // Simulate API call
-        setTimeout(() => {
-          // Mock plan data
-          const plan = samplePlan;
-
-          setFormData({
-            name: plan.name,
-            price: plan.price.toString(),
-            duration: plan.duration.toString(),
-            description: plan.description,
-          });
-
-          setIsFetching(false);
-        }, 500);
+        const response = await planAPI.getById(id);
+        const plan = response;
+        setFormData({
+          name: plan.name,
+          price: plan.price.toString(),
+          duration: plan.duration.toString(),
+          description: plan.description,
+        });
       } catch (err) {
         console.error("Error fetching plan:", err);
         setError("Failed to fetch plan data. Please try again.");
+      } finally {
         setIsFetching(false);
       }
     };
@@ -129,16 +119,13 @@ const PlanForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setIsLoading(true);
       setError(null);
       setSuccess(null);
 
-      // Prepare data for API
       const planData = {
         name: formData.name,
         price: parseFloat(formData.price),
@@ -146,27 +133,17 @@ const PlanForm = () => {
         description: formData.description,
       };
 
-      // In a real app, you would save the plan via API
-      // if (isEditMode) {
-      //   await planAPI.update(id, planData);
-      // } else {
-      //   await planAPI.create(planData);
-      // }
+      if (isEditMode) {
+        await planAPI.update(id, planData);
+        setSuccess("Plan updated successfully!");
+      } else {
+        await planAPI.create(planData);
+        setSuccess("Plan created successfully!");
+      }
 
-      // Simulate API call
       setTimeout(() => {
-        setIsLoading(false);
-        setSuccess(
-          isEditMode
-            ? "Plan updated successfully!"
-            : "Plan created successfully!"
-        );
-
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate("/admin/plans");
-        }, 1500);
-      }, 1000);
+        navigate("/admin/plans");
+      }, 1500);
     } catch (err) {
       console.error("Error saving plan:", err);
       setError(
@@ -174,6 +151,7 @@ const PlanForm = () => {
           ? "Failed to update plan. Please try again."
           : "Failed to create plan. Please try again."
       );
+    } finally {
       setIsLoading(false);
     }
   };
@@ -366,7 +344,7 @@ const PlanForm = () => {
                   <Link to="/admin/plans">
                     <button
                       type="button"
-                      className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                      className="px-8 py-2 font-semibold bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
                     >
                       Cancel
                     </button>
@@ -377,7 +355,7 @@ const PlanForm = () => {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={isLoading}
-                    className={`px-6 py-2 rounded-lg text-white flex items-center ${
+                    className={`px-6 py-2 rounded-lg font-semibold text-white flex items-center ${
                       isLoading
                         ? "bg-primary/70"
                         : "bg-primary hover:bg-red-700"
@@ -390,7 +368,7 @@ const PlanForm = () => {
                       </>
                     ) : (
                       <>
-                        <FiSave className="w-4 h-4 mr-2" />
+                        <FiSave className="w-5 h-5 mr-2" />
                         {isEditMode ? "Update Plan" : "Create Plan"}
                       </>
                     )}

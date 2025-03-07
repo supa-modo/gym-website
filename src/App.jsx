@@ -30,6 +30,7 @@ import OrderDetails from "./admin/pages/OrderDetails";
 import Settings from "./admin/pages/Settings";
 import ProfileSettings from "./admin/pages/ProfileSettings";
 import NotFound from "./admin/pages/NotFound";
+import AddSubscription from "./admin/pages/AddSubscription";
 
 // Public Layout component
 const PublicLayout = () => (
@@ -69,6 +70,7 @@ const App = () => {
             {/* Subscriptions */}
             <Route path="subscriptions" element={<Subscriptions />} />
             <Route path="subscriptions/:id" element={<SubscriptionDetails />} />
+            <Route path="subscriptions/new" element={<AddSubscription />} />
 
             {/* Products */}
             <Route path="products" element={<Products />} />

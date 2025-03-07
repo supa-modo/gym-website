@@ -10,76 +10,13 @@ import {
   FiDollarSign,
   FiUsers,
 } from "react-icons/fi";
-import { planAPI } from "../utils/api";
-
-// Sample membership plans data
-const samplePlans = [
-  {
-    id: 1,
-    name: "Basic Monthly",
-    price: 29.99,
-    duration: 1,
-    description:
-      "Access to gym facilities and basic equipment. Perfect for beginners.",
-    activeSubscriptions: 245,
-    createdAt: "2023-01-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    name: "Premium Monthly",
-    price: 49.99,
-    duration: 1,
-    description:
-      "Full access to all gym facilities, classes, and premium equipment.",
-    activeSubscriptions: 378,
-    createdAt: "2023-01-15T11:45:00Z",
-  },
-  {
-    id: 3,
-    name: "Basic Quarterly",
-    price: 79.99,
-    duration: 3,
-    description:
-      "Access to gym facilities and basic equipment for 3 months. Save 10%.",
-    activeSubscriptions: 156,
-    createdAt: "2023-02-20T09:15:00Z",
-  },
-  {
-    id: 4,
-    name: "Premium Quarterly",
-    price: 129.99,
-    duration: 3,
-    description:
-      "Full access to all gym facilities, classes, and premium equipment for 3 months. Save 15%.",
-    activeSubscriptions: 203,
-    createdAt: "2023-02-20T10:30:00Z",
-  },
-  {
-    id: 5,
-    name: "Basic Annual",
-    price: 299.99,
-    duration: 12,
-    description:
-      "Access to gym facilities and basic equipment for a full year. Save 20%.",
-    activeSubscriptions: 89,
-    createdAt: "2023-03-10T14:20:00Z",
-  },
-  {
-    id: 6,
-    name: "Premium Annual",
-    price: 499.99,
-    duration: 12,
-    description:
-      "Full access to all gym facilities, classes, and premium equipment for a full year. Save 25%.",
-    activeSubscriptions: 124,
-    createdAt: "2023-03-10T15:45:00Z",
-  },
-];
+import planAPI from "../utils/planAPI";
+import formatDate from "../utils/dateFormatter";
 
 const MembershipPlans = () => {
   const navigate = useNavigate();
 
-  const [plans, setPlans] = useState(samplePlans);
+  const [plans, setPlans] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -91,19 +28,12 @@ const MembershipPlans = () => {
       try {
         setIsLoading(true);
         setError(null);
-
-        // In a real app, you would fetch data from your API
-        // const response = await planAPI.getAll();
-        // setPlans(response.data);
-
-        // Simulate API call
-        setTimeout(() => {
-          setPlans(samplePlans);
-          setIsLoading(false);
-        }, 500);
+        const response = await planAPI.getAll();
+        setPlans(response);
       } catch (err) {
         console.error("Error fetching plans:", err);
         setError("Failed to fetch membership plans. Please try again.");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -117,22 +47,14 @@ const MembershipPlans = () => {
 
     try {
       setIsLoading(true);
-
-      // In a real app, you would call your API
-      // await planAPI.delete(planToDelete.id);
-
-      // Simulate API call
-      const updatedPlans = plans.filter((plan) => plan.id !== planToDelete.id);
-
-      setTimeout(() => {
-        setPlans(updatedPlans);
-        setIsDeleteModalOpen(false);
-        setPlanToDelete(null);
-        setIsLoading(false);
-      }, 500);
+      await planAPI.delete(planToDelete.id);
+      setPlans((prev) => prev.filter((plan) => plan.id !== planToDelete.id));
+      setIsDeleteModalOpen(false);
+      setPlanToDelete(null);
     } catch (err) {
       console.error("Error deleting plan:", err);
       setError("Failed to delete plan. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -144,16 +66,6 @@ const MembershipPlans = () => {
       currency: "USD",
       minimumFractionDigits: 2,
     }).format(amount);
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(date);
   };
 
   // Format duration
@@ -174,10 +86,10 @@ const MembershipPlans = () => {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm font-medium transition-colors shadow-lg shadow-primary/20"
+            className="bg-primary hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 text-sm font-semibold transition-colors shadow-lg shadow-primary/20"
           >
             <FiPlus className="w-4 h-4" />
-            <span>Add New Plan</span>
+            <span >Add New Plan</span>
           </motion.button>
         </Link>
       </div>
@@ -265,20 +177,21 @@ const MembershipPlans = () => {
                   Created: {formatDate(plan.createdAt)}
                 </span>
 
-                <div className="flex space-x-2">
+                <div className="flex space-x-5">
                   <button
                     onClick={() => navigate(`/admin/plans/${plan.id}`)}
-                    className="text-yellow-500 hover:text-yellow-400 transition-colors"
+                    className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                     title="Edit Plan"
                   >
                     <FiEdit2 className="w-4 h-4" />
+                    <span className="text-sm">Edit</span>
                   </button>
                   <button
                     onClick={() => {
                       setPlanToDelete(plan);
                       setIsDeleteModalOpen(true);
                     }}
-                    className="text-red-500 hover:text-red-400 transition-colors"
+                    className="text-red-500 hover:text-red-400 transition-colors flex items-center space-x-1"
                     title="Delete Plan"
                     disabled={plan.activeSubscriptions > 0}
                   >
@@ -289,6 +202,15 @@ const MembershipPlans = () => {
                           : ""
                       }`}
                     />
+                    <span
+                      className={` text-sm ${
+                        plan.activeSubscriptions > 0
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      Delete
+                    </span>
                   </button>
                 </div>
               </div>

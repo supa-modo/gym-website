@@ -11,15 +11,12 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
-import { MdAddCard,  MdSpaceDashboard } from "react-icons/md";
-import {
-  PiUserCheckDuotone,
-  PiUsersDuotone,
-} from "react-icons/pi";
+import { MdAddCard, MdSpaceDashboard } from "react-icons/md";
+import { PiUserCheckDuotone, PiUsersDuotone } from "react-icons/pi";
 import useAuth from "../../hooks/useAuth";
 import { HiCreditCard } from "react-icons/hi";
 import { IoBagAdd } from "react-icons/io5";
-import {  BiSolidCategory, } from "react-icons/bi";
+import { BiSolidCategory } from "react-icons/bi";
 
 const menuItems = [
   {
@@ -58,7 +55,7 @@ const menuItems = [
       {
         title: "Add New Subscritption",
         icon: <MdAddCard className="w-6 h-6" />,
-        path: "/admin/plans/new",
+        path: "/admin/subscriptions/news/s",
       },
     ],
   },
@@ -144,7 +141,9 @@ const Sidebar = ({ isMobile, onClose }) => {
     >
       {isMobile && (
         <div className="flex justify-between items-center p-4 border-b border-zinc-700">
-          <h2 className="text-xl font-bold text-white">Admin Management Console</h2>
+          <h2 className="text-xl font-bold text-white">
+            Admin Management Console
+          </h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <FiX className="w-6 h-6" />
           </button>
@@ -204,6 +203,7 @@ const Sidebar = ({ isMobile, onClose }) => {
                               : "text-gray-300 hover:text-white hover:bg-zinc-700/50"
                           }`
                         }
+                        end
                         onClick={isMobile ? onClose : undefined}
                       >
                         {item.icon}

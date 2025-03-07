@@ -30,7 +30,7 @@ const NotFound = () => {
             className="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 mx-auto transition-colors"
           >
             <FiHome className="w-5 h-5" />
-            <span>Back to Dashboard</span>
+            <span className="font-semibold">Back to Dashboard</span>
           </motion.button>
         </Link>
       </motion.div>

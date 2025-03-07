@@ -13,104 +13,18 @@ import {
   FiUser,
   FiCreditCard,
 } from "react-icons/fi";
-import { subscriptionAPI } from "../utils/api";
-
-// Sample subscription data
-const sampleSubscriptions = [
-  {
-    id: 1,
-    user: { id: 1, name: "John Doe", email: "john@example.com" },
-    plan: { id: 1, name: "Basic Monthly", price: 29.99, duration: 1 },
-    startDate: "2023-05-01T10:30:00Z",
-    endDate: "2023-06-01T10:30:00Z",
-    status: "active",
-    paymentMethod: "Credit Card",
-    createdAt: "2023-05-01T10:30:00Z",
-  },
-  {
-    id: 2,
-    user: { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    plan: { id: 2, name: "Premium Monthly", price: 49.99, duration: 1 },
-    startDate: "2023-05-05T14:45:00Z",
-    endDate: "2023-06-05T14:45:00Z",
-    status: "active",
-    paymentMethod: "PayPal",
-    createdAt: "2023-05-05T14:45:00Z",
-  },
-  {
-    id: 3,
-    user: { id: 3, name: "Mike Johnson", email: "mike@example.com" },
-    plan: { id: 3, name: "Basic Quarterly", price: 79.99, duration: 3 },
-    startDate: "2023-04-15T09:15:00Z",
-    endDate: "2023-07-15T09:15:00Z",
-    status: "active",
-    paymentMethod: "Credit Card",
-    createdAt: "2023-04-15T09:15:00Z",
-  },
-  {
-    id: 4,
-    user: { id: 4, name: "Sarah Williams", email: "sarah@example.com" },
-    plan: { id: 1, name: "Basic Monthly", price: 29.99, duration: 1 },
-    startDate: "2023-04-20T16:20:00Z",
-    endDate: "2023-05-20T16:20:00Z",
-    status: "expired",
-    paymentMethod: "Credit Card",
-    createdAt: "2023-04-20T16:20:00Z",
-  },
-  {
-    id: 5,
-    user: { id: 5, name: "David Brown", email: "david@example.com" },
-    plan: { id: 4, name: "Premium Quarterly", price: 129.99, duration: 3 },
-    startDate: "2023-03-10T11:10:00Z",
-    endDate: "2023-06-10T11:10:00Z",
-    status: "canceled",
-    paymentMethod: "PayPal",
-    createdAt: "2023-03-10T11:10:00Z",
-  },
-  {
-    id: 6,
-    user: { id: 6, name: "Emily Davis", email: "emily@example.com" },
-    plan: { id: 5, name: "Basic Annual", price: 299.99, duration: 12 },
-    startDate: "2023-01-15T13:25:00Z",
-    endDate: "2024-01-15T13:25:00Z",
-    status: "active",
-    paymentMethod: "Credit Card",
-    createdAt: "2023-01-15T13:25:00Z",
-  },
-  {
-    id: 7,
-    user: { id: 7, name: "Michael Wilson", email: "michael@example.com" },
-    plan: { id: 2, name: "Premium Monthly", price: 49.99, duration: 1 },
-    startDate: "2023-05-10T09:40:00Z",
-    endDate: "2023-06-10T09:40:00Z",
-    status: "active",
-    paymentMethod: "Credit Card",
-    createdAt: "2023-05-10T09:40:00Z",
-  },
-  {
-    id: 8,
-    user: { id: 8, name: "Jessica Taylor", email: "jessica@example.com" },
-    plan: { id: 1, name: "Basic Monthly", price: 29.99, duration: 1 },
-    startDate: "2023-04-25T15:15:00Z",
-    endDate: "2023-05-25T15:15:00Z",
-    status: "pending",
-    paymentMethod: "PayPal",
-    createdAt: "2023-04-25T15:15:00Z",
-  },
-];
+import subscriptionAPI from "../utils//subscriptionAPI";
 
 const Subscriptions = () => {
   const navigate = useNavigate();
 
-  const [subscriptions, setSubscriptions] = useState(sampleSubscriptions);
-  const [filteredSubscriptions, setFilteredSubscriptions] =
-    useState(sampleSubscriptions);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [filteredSubscriptions, setFilteredSubscriptions] = useState([]);
+  const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalSubscriptions, setTotalSubscriptions] = useState(
-    sampleSubscriptions.length
-  );
+
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedPlan, setSelectedPlan] = useState("all");
   const [error, setError] = useState(null);
@@ -127,14 +41,19 @@ const Subscriptions = () => {
   // Plan options (derived from subscriptions)
   const planOptions = [
     { value: "all", label: "All Plans" },
-    ...Array.from(new Set(sampleSubscriptions.map((sub) => sub.plan.id))).map(
-      (planId) => {
-        const plan = sampleSubscriptions.find(
-          (sub) => sub.plan.id === planId
-        ).plan;
-        return { value: planId.toString(), label: plan.name };
-      }
-    ),
+    ...Array.from(
+      new Set(
+        subscriptions
+          .filter((sub) => sub?.plan && sub.plan.id)
+          .map((sub) => sub.plan.id)
+      )
+    ).map((planId) => {
+      const plan = subscriptions.find((sub) => sub?.plan?.id === planId)?.plan;
+      return {
+        value: planId.toString(),
+        label: plan?.name || "Unknown Plan",
+      };
+    }),
   ];
 
   // Fetch subscriptions on component mount
@@ -143,40 +62,22 @@ const Subscriptions = () => {
       try {
         setIsLoading(true);
         setError(null);
+        const response = await subscriptionAPI.getAll();
 
-        // In a real app, you would fetch data from your API
-        // const response = await subscriptionAPI.getAll();
-        // setSubscriptions(response.data);
-
-        // Simulate API call with filtering
-        let filtered = [...sampleSubscriptions];
-
-        if (selectedStatus !== "all") {
-          filtered = filtered.filter((sub) => sub.status === selectedStatus);
-        }
-
-        if (selectedPlan !== "all") {
-          filtered = filtered.filter(
-            (sub) => sub.plan.id === parseInt(selectedPlan)
-          );
-        }
-
-        setFilteredSubscriptions(filtered);
-        setTotalSubscriptions(filtered.length);
-
-        // Simulate API delay
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
+        // Use the data directly from the API response
+        setSubscriptions(response);
+        setFilteredSubscriptions(response);
+        setTotalSubscriptions(response.length);
       } catch (err) {
         console.error("Error fetching subscriptions:", err);
         setError("Failed to fetch subscriptions. Please try again.");
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchSubscriptions();
-  }, [selectedStatus, selectedPlan]);
+  }, []);
 
   // Calculate pagination
   const totalPages = Math.ceil(totalSubscriptions / itemsPerPage);
@@ -386,113 +287,114 @@ const Subscriptions = () => {
               </div>
             </div>
           ))
-        ) : currentSubscriptions.length > 0 ? (
-          currentSubscriptions.map((subscription) => (
-            <motion.div
-              key={subscription.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden flex flex-col"
-            >
-              {/* Status Bar */}
-              <div
-                className={`h-1 ${
-                  subscription.status === "active"
-                    ? "bg-green-500"
-                    : subscription.status === "expired"
-                    ? "bg-red-500"
-                    : subscription.status === "canceled"
-                    ? "bg-yellow-500"
-                    : "bg-blue-500"
-                }`}
-              ></div>
+        ) : subscriptions.length > 0 ? (
+          currentSubscriptions.map((subscription) => {
+            const user = subscription.user || {};
+            const plan = subscription.plan || {};
 
-              <div className="p-5 flex-1">
-                {/* Status Badge */}
-                <div className="flex justify-between items-start mb-3">
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
-                      subscription.status
-                    )}`}
+            return (
+              <motion.div
+                key={subscription.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden flex flex-col"
+              >
+                {/* Status Bar */}
+                <div
+                  className={`h-1 ${
+                    subscription.status === "active"
+                      ? "bg-green-500"
+                      : subscription.status === "expired"
+                      ? "bg-red-500"
+                      : subscription.status === "canceled"
+                      ? "bg-yellow-500"
+                      : "bg-blue-500"
+                  }`}
+                ></div>
+
+                <div className="p-5 flex-1">
+                  {/* Status Badge */}
+                  <div className="flex justify-between items-start mb-3">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
+                        subscription.status
+                      )}`}
+                    >
+                      {subscription.status.charAt(0).toUpperCase() +
+                        subscription.status.slice(1)}
+                    </span>
+
+                    {subscription.status === "active" && (
+                      <span className="text-xs text-gray-400">
+                        {getDaysRemaining(subscription.endDate)} days remaining
+                      </span>
+                    )}
+                  </div>
+
+                  {/* User Info */}
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center text-white font-medium mr-3">
+                      {user.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="text-white font-medium">{user.name}</h3>
+                      <p className="text-gray-400 text-sm">{user.email}</p>
+                    </div>
+                  </div>
+
+                  {/* Plan Details */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-sm">
+                      <FiCreditCard className="text-gray-400 mr-2" />
+                      <span className="text-white">{plan.name}</span>
+                    </div>
+
+                    <div className="flex items-center text-sm">
+                      <FiCalendar className="text-gray-400 mr-2" />
+                      <span className="text-gray-400">
+                        {formatDate(subscription.startDate)} -{" "}
+                        {formatDate(subscription.endDate)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center text-sm">
+                      <FiUser className="text-gray-400 mr-2" />
+                      <span className="text-gray-400">
+                        Payment Method: {subscription.paymentMethod}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Price */}
+                  <div className="bg-zinc-700/30 rounded-lg p-3 flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">
+                      Subscription Price
+                    </span>
+                    <span className="text-white font-medium">
+                      {formatCurrency(plan.price)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-t border-zinc-700 p-4 flex justify-between items-center">
+                  <span className="text-xs text-gray-400">
+                    Created: {formatDate(subscription.createdAt)}
+                  </span>
+
+                  <button
+                    onClick={() =>
+                      navigate(`/admin/subscriptions/${subscription.id}`)
+                    }
+                    className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg text-sm flex items-center transition-colors"
                   >
-                    {subscription.status.charAt(0).toUpperCase() +
-                      subscription.status.slice(1)}
-                  </span>
-
-                  {subscription.status === "active" && (
-                    <span className="text-xs text-gray-400">
-                      {getDaysRemaining(subscription.endDate)} days remaining
-                    </span>
-                  )}
+                    <FiEye className="w-4 h-4 mr-1" />
+                    Details
+                  </button>
                 </div>
-
-                {/* User Info */}
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center text-white font-medium mr-3">
-                    {subscription.user.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h3 className="text-white font-medium">
-                      {subscription.user.name}
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      {subscription.user.email}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Plan Details */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm">
-                    <FiCreditCard className="text-gray-400 mr-2" />
-                    <span className="text-white">{subscription.plan.name}</span>
-                  </div>
-
-                  <div className="flex items-center text-sm">
-                    <FiCalendar className="text-gray-400 mr-2" />
-                    <span className="text-gray-400">
-                      {formatDate(subscription.startDate)} -{" "}
-                      {formatDate(subscription.endDate)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center text-sm">
-                    <FiUser className="text-gray-400 mr-2" />
-                    <span className="text-gray-400">
-                      Payment Method: {subscription.paymentMethod}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Price */}
-                <div className="bg-zinc-700/30 rounded-lg p-3 flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">
-                    Subscription Price
-                  </span>
-                  <span className="text-white font-medium">
-                    {formatCurrency(subscription.plan.price)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="border-t border-zinc-700 p-4 flex justify-between items-center">
-                <span className="text-xs text-gray-400">
-                  Created: {formatDate(subscription.createdAt)}
-                </span>
-
-                <button
-                  onClick={() =>
-                    navigate(`/admin/subscriptions/${subscription.id}`)
-                  }
-                  className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg text-sm flex items-center transition-colors"
-                >
-                  <FiEye className="w-4 h-4 mr-1" />
-                  Details
-                </button>
-              </div>
-            </motion.div>
-          ))
+              </motion.div>
+            );
+          })
         ) : (
           <div className="col-span-full bg-zinc-800 rounded-xl border border-zinc-700 p-8 text-center">
             <p className="text-gray-400 mb-4">
@@ -568,8 +470,6 @@ const Subscriptions = () => {
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };
