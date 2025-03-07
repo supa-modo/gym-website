@@ -19,6 +19,7 @@ const Footer = () => {
     { name: "Store", href: "/store", type: "router" },
     { name: "Pricing", href: "pricing", type: "scroll" },
     { name: "Contact", href: "contact", type: "scroll" },
+    { name: "Admin Login", href: "/admin", type: "router" },
   ];
 
   const programs = [

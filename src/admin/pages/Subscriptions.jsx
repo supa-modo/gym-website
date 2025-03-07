@@ -238,6 +238,84 @@ const Subscriptions = () => {
         <h1 className="text-2xl font-bold text-white">Subscriptions</h1>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+        {/* Active Subscriptions */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Active Subscriptions</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredSubscriptions.filter((sub) => sub.status === "active")
+                    .length
+                }
+              </h3>
+            </div>
+            <div className="bg-green-500/10 p-3 rounded-lg">
+              <FiCreditCard className="text-green-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Expired Subscriptions */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Expired Subscriptions</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredSubscriptions.filter(
+                    (sub) => sub.status === "expired"
+                  ).length
+                }
+              </h3>
+            </div>
+            <div className="bg-red-500/10 p-3 rounded-lg">
+              <FiClock className="text-red-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Canceled Subscriptions */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Canceled Subscriptions</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredSubscriptions.filter(
+                    (sub) => sub.status === "canceled"
+                  ).length
+                }
+              </h3>
+            </div>
+            <div className="bg-yellow-500/10 p-3 rounded-lg">
+              <FiX className="text-yellow-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Pending Subscriptions */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Pending Subscriptions</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredSubscriptions.filter(
+                    (sub) => sub.status === "pending"
+                  ).length
+                }
+              </h3>
+            </div>
+            <div className="bg-blue-500/10 p-3 rounded-lg">
+              <FiClock className="text-blue-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
         <div className="flex flex-wrap gap-4">
@@ -491,83 +569,7 @@ const Subscriptions = () => {
         </div>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        {/* Active Subscriptions */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Active Subscriptions</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredSubscriptions.filter((sub) => sub.status === "active")
-                    .length
-                }
-              </h3>
-            </div>
-            <div className="bg-green-500/10 p-3 rounded-lg">
-              <FiCreditCard className="text-green-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Expired Subscriptions */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Expired Subscriptions</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredSubscriptions.filter(
-                    (sub) => sub.status === "expired"
-                  ).length
-                }
-              </h3>
-            </div>
-            <div className="bg-red-500/10 p-3 rounded-lg">
-              <FiClock className="text-red-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Canceled Subscriptions */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Canceled Subscriptions</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredSubscriptions.filter(
-                    (sub) => sub.status === "canceled"
-                  ).length
-                }
-              </h3>
-            </div>
-            <div className="bg-yellow-500/10 p-3 rounded-lg">
-              <FiX className="text-yellow-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Pending Subscriptions */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Pending Subscriptions</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredSubscriptions.filter(
-                    (sub) => sub.status === "pending"
-                  ).length
-                }
-              </h3>
-            </div>
-            <div className="bg-blue-500/10 p-3 rounded-lg">
-              <FiClock className="text-blue-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };

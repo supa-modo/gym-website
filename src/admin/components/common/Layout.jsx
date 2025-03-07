@@ -51,14 +51,16 @@ const Layout = () => {
 
   // If not authenticated, redirect to login
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block lg:w-64 flex-shrink-0">
-        <Sidebar />
+    <div className="flex h-screen bg-zinc-900 overflow-hidden">
+      {/* Desktop Sidebar - Fixed */}
+      <div className="hidden lg:block lg:w-[17rem] flex-shrink-0">
+        <div className="h-full overflow-hidden">
+          <Sidebar />
+        </div>
       </div>
 
       {/* Mobile Sidebar */}
@@ -74,27 +76,32 @@ const Layout = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Fixed Header */}
         <Header
           title={pageTitle}
           onMenuClick={() => setIsMobileSidebarOpen(true)}
         />
 
-        <main className="flex-1 overflow-y-auto bg-zinc-900 p-4 sm:p-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Outlet />
-          </motion.div>
-        </main>
+        {/* Scrollable Main Content */}
+        <div className="flex-1 flex flex-col overflow-y-auto bg-zinc-900">
+          <main className="flex-grow p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Outlet />
+            </motion.div>
+          </main>
 
-        <footer className="bg-zinc-800 border-t border-zinc-700 py-4 px-6 text-center">
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Elite Fitness Guru. All rights
-            reserved.
-          </p>
-        </footer>
+          {/* Footer - Now part of the flex column layout but after the flex-grow main */}
+          <footer className="bg-zinc-900 border-t border-zinc-700 py-3 px-6 text-center mt-auto">
+            <p className="text-xs text-gray-400">
+              &copy; {new Date().getFullYear()} Elite Fitness Guru. All rights
+              reserved.
+            </p>
+          </footer>
+        </div>
       </div>
     </div>
   );

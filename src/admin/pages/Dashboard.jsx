@@ -361,7 +361,7 @@ const Dashboard = () => {
                 Revenue chart will be displayed here
               </p>
               <p className="text-gray-500 text-sm mt-2">
-                Integrate with Chart.js or Recharts
+                To be integrated with Recharts later for responsive charts
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// API base URL - will be used when backend is ready
+// API base URL
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // Create axios instance
@@ -35,8 +35,6 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      // For now, just logout if token is invalid
-      localStorage.removeItem("adminUser");
       localStorage.removeItem("adminToken");
       window.location.href = "/admin/login";
 
@@ -47,162 +45,57 @@ api.interceptors.response.use(
   }
 );
 
-// Mock API responses for development until backend is ready
-const mockResponses = {
-  // Add mock responses here as needed
-};
-
 // Helper function to simulate API delay
 const simulateDelay = (ms = 500) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // User API
 export const userAPI = {
-  getAll: async (params) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { users: [], total: 0 } };
-  },
-  getById: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  create: async (data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id: Date.now() } };
-  },
-  update: async (id, data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id } };
-  },
-  delete: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { success: true } };
-  },
-  getSubscriptions: async (userId) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: [] };
-  },
+  getAll: (params) => api.get("/users", { params }),
+  getById: (id) => api.get(`/users/${id}`),
+  create: (data) => api.post("/users", data),
+  update: (id, data) => api.put(`/users/${id}`, data),
+  delete: (id) => api.delete(`/users/${id}`),
+  getSubscriptions: (userId) => api.get(`/users/${userId}/subscriptions`),
 };
 
 // Membership Plans API
 export const planAPI = {
-  getAll: async () => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: [] };
-  },
-  getById: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  create: async (data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id: Date.now() } };
-  },
-  update: async (id, data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id } };
-  },
-  delete: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { success: true } };
-  },
+  getAll: () => api.get("/membership/plans"),
+  getById: (id) => api.get(`/membership/plans/${id}`),
+  create: (data) => api.post("/membership/plans", data),
+  update: (id, data) => api.patch(`/membership/plans/${id}`, data),
+  delete: (id) => api.delete(`/membership/plans/${id}`),
 };
 
 // Subscriptions API
 export const subscriptionAPI = {
-  getAll: async () => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: [] };
-  },
-  getById: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  cancel: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { success: true } };
-  },
-  create: async (data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id: Date.now() } };
-  },
+  getAll: () => api.get("/membership/admin/subscriptions"),
+  getById: (id) => api.get(`/membership/subscriptions/${id}`),
+  cancel: (id) => api.patch(`/membership/subscriptions/${id}/cancel`),
+  create: (data) => api.post("/membership/subscribe", data),
 };
 
 // Products API
 export const productAPI = {
-  getAll: async (params) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { products: [], total: 0 } };
-  },
-  getById: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  create: async (data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id: Date.now() } };
-  },
-  update: async (id, data) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { ...data, id } };
-  },
-  delete: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { success: true } };
-  },
+  getAll: (params) => api.get("/products", { params }),
+  getById: (id) => api.get(`/products/${id}`),
+  create: (data) => api.post("/products", data),
+  update: (id, data) => api.put(`/products/${id}`, data),
+  delete: (id) => api.delete(`/products/${id}`),
 };
 
 // Orders API
 export const orderAPI = {
-  getAll: async (params) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { orders: [], total: 0 } };
-  },
-  getById: async (id) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  updateStatus: async (id, status) => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: { success: true } };
-  },
+  getAll: (params) => api.get("/orders/admin/all", { params }),
+  getById: (id) => api.get(`/orders/${id}`),
+  updateStatus: (id, status) => api.patch(`/orders/${id}/status`, { status }),
 };
 
 // Dashboard API
 export const dashboardAPI = {
-  getStats: async () => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: {} };
-  },
-  getRecentActivity: async () => {
-    // Simulate API call
-    await simulateDelay();
-    return { data: [] };
-  },
+  getStats: () => api.get("/admin/stats"),
+  getRecentActivity: () => api.get("/admin/recent-activity"),
 };
 
 export default api;

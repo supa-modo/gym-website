@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
-import JoinNowModal from "./Register";
 import BlankModal from "./BlankModal";
 
 const Navbar = () => {

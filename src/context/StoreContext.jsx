@@ -18,7 +18,6 @@ export const StoreProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Load cart from local storage on component mount
   useEffect(() => {
@@ -76,16 +75,26 @@ export const StoreProvider = ({ children }) => {
     );
   };
 
-  // Calculate cart totals
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  // Handle complete order
+  const handleCompleteOrder = () => {
+    setOrderComplete(true);
+    // Reset cart after order is complete
+    setTimeout(() => {
+      setCart([]);
+      setOrderComplete(false);
+    }, 5000);
+  };
 
   // Clear cart
   const clearCart = () => {
     setCart([]);
   };
+
+  // Calculate cart total
+  const cartTotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   return (
     <StoreContext.Provider
@@ -96,12 +105,11 @@ export const StoreProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         cartTotal,
-        clearCart,
         isCartOpen,
         setIsCartOpen,
         orderComplete,
-        isCheckoutOpen,
-        setIsCheckoutOpen,
+        handleCompleteOrder,
+        clearCart,
       }}
     >
       {children}

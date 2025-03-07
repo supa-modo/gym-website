@@ -1,8 +1,11 @@
 import React, { createContext, useState, useEffect } from "react";
-import usersData from "../data/users.json";
+import axios from "axios";
 
 // Create context
 export const AuthContext = createContext();
+
+// API base URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -13,27 +16,29 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLoggedIn = async () => {
       try {
-        const storedUser = localStorage.getItem("adminUser");
+        const token = localStorage.getItem("adminToken");
 
-        if (!storedUser) {
+        if (!token) {
           setLoading(false);
           return;
         }
 
-        // Parse stored user data
-        const userData = JSON.parse(storedUser);
+        // Verify token and get user data from backend
+        const response = await axios.get(`${API_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         // Only set as logged in if user is an admin
-        if (userData.role === "admin") {
-          setCurrentUser(userData);
+        if (response.data.role === "admin") {
+          setCurrentUser(response.data);
         } else {
-          // If not admin, clear storage
-          localStorage.removeItem("adminUser");
+          // If not admin, clear token
           localStorage.removeItem("adminToken");
         }
       } catch (err) {
         console.error("Auth check error:", err);
-        localStorage.removeItem("adminUser");
         localStorage.removeItem("adminToken");
       } finally {
         setLoading(false);
@@ -48,54 +53,61 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
 
-      // Find user in the JSON data
-      const user = usersData.users.find(
-        (user) => user.email.toLowerCase() === email.toLowerCase()
-      );
+      // Call backend login API
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
 
-      // Check if user exists and password matches
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      if (user.password !== password) {
-        throw new Error("Invalid password");
-      }
+      const { token, user } = response.data;
 
       // Check if user is admin
       if (user.role !== "admin") {
         throw new Error("Unauthorized. Admin access only.");
       }
 
-      // Create a user object without the password
-      const userWithoutPassword = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profilePicture: user.profilePicture,
-      };
-
-      // Create a simple token (in a real app, this would be a JWT)
-      const token = btoa(`${user.email}:${Date.now()}`);
-
-      // Save user and token to localStorage
-      localStorage.setItem("adminUser", JSON.stringify(userWithoutPassword));
+      // Save token to localStorage
       localStorage.setItem("adminToken", token);
 
       // Set user in state
-      setCurrentUser(userWithoutPassword);
+      setCurrentUser(user);
 
-      return userWithoutPassword;
+      return user;
     } catch (err) {
-      setError(err.message || "Login failed");
-      throw err;
+      const errorMessage =
+        err.response?.data?.error || err.message || "Login failed";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  // Register function
+  const register = async (userData) => {
+    try {
+      setError(null);
+
+      // Call backend register API
+      const response = await axios.post(`${API_URL}/auth/register`, userData);
+
+      const { token, user } = response.data;
+
+      // Save token to localStorage
+      localStorage.setItem("adminToken", token);
+
+      // Set user in state
+      setCurrentUser(user);
+
+      return user;
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.error || err.message || "Registration failed";
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem("adminUser");
     localStorage.removeItem("adminToken");
     setCurrentUser(null);
   };
@@ -112,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     error,
     login,
+    register,
     logout,
     getAuthHeader,
     isAuthenticated: !!currentUser,

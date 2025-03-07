@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiUser, FiLock, FiAlertCircle } from "react-icons/fi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { TbAlertTriangle } from "react-icons/tb";
+import { PiPasswordDuotone, PiUserDuotone } from "react-icons/pi";
 import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
@@ -10,6 +12,7 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
@@ -32,8 +35,6 @@ const Login = () => {
 
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
     }
 
     setErrors(newErrors);
@@ -64,25 +65,44 @@ const Login = () => {
     }
   };
 
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
-    <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-4">
+    <div
+      className="min-h-screen bg-zinc-900  flex items-center justify-center p-4"
+      style={{
+        backgroundImage: `url('/images/img3.jpg')`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
+    >
+      {/* Enhanced gradient overlay with multiple layers */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/20 z-10 backdrop-blur-sm" />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="w-full max-w-xl relative z-20"
       >
-        <div className="bg-zinc-800 rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8">
-            <div className="text-center mb-8">
+        <div className="bg-zinc-800/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+          <div className="px-14 py-8">
+            <div className="w-full ">
+              <img
+                src="/images/logo-gym.png"
+                alt="gym-logo"
+                className="w-28 h-28 mx-auto"
+              />
+            </div>
+            <div className="text-center mb-5">
               <h1 className="text-3xl font-bold text-white mb-2">
-                Admin Login
+                Elite Fitness Management Console
               </h1>
               <p className="text-gray-400 text-sm">
-                Enter your credentials to access the admin dashboard
-              </p>
-              <p className="text-gray-400 text-xs mt-2">
-                (Use admin@example.com / admin123 to login)
+                Enter your login credentials to access the admin dashboard
               </p>
             </div>
 
@@ -92,7 +112,7 @@ const Login = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-6 flex items-center gap-3"
               >
-                <FiAlertCircle className="text-red-500 flex-shrink-0" />
+                <TbAlertTriangle className="text-red-500 flex-shrink-0" />
                 <p className="text-red-500 text-sm">{loginError}</p>
               </motion.div>
             )}
@@ -107,18 +127,18 @@ const Login = () => {
                     Email Address
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiUser className="text-gray-500" />
+                    <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                      <PiUserDuotone className="text-gray-500 w-5 h-5" />
                     </div>
                     <input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full pl-10 pr-3 py-3 bg-zinc-700/50 border ${
+                      className={`w-full pl-14 pr-3 py-3 bg-zinc-700/50 border ${
                         errors.email ? "border-red-500" : "border-zinc-600"
                       } rounded-lg text-white focus:outline-none focus:border-primary transition-colors`}
-                      placeholder="admin@example.com"
+                      placeholder="youremail@example.com"
                     />
                   </div>
                   {errors.email && (
@@ -134,19 +154,30 @@ const Login = () => {
                     Password
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiLock className="text-gray-500" />
+                    <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                      <PiPasswordDuotone className="text-gray-400 w-5 h-5" />
                     </div>
                     <input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className={`w-full pl-10 pr-3 py-3 bg-zinc-700/50 border ${
+                      className={`w-full pl-14 pr-10 py-3 bg-zinc-700/50 border ${
                         errors.password ? "border-red-500" : "border-zinc-600"
                       } rounded-lg text-white focus:outline-none focus:border-primary transition-colors`}
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      onClick={handleTogglePassword}
+                      className="absolute inset-y-0 right-0 pr-6 flex items-center"
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="text-gray-400 w-5 h-5" />
+                      ) : (
+                        <FaEye className="text-gray-400 w-5 h-5" />
+                      )}
+                    </button>
                   </div>
                   {errors.password && (
                     <p className="mt-1 text-sm text-red-500">
@@ -226,7 +257,7 @@ const Login = () => {
             </form>
           </div>
 
-          <div className="bg-zinc-900/50 px-8 py-4 text-center">
+          <div className="bg-zinc-900/70 px-8 py-4 text-center">
             <p className="text-sm text-gray-400">
               Return to{" "}
               <a

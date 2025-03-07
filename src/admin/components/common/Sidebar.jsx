@@ -2,89 +2,135 @@ import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  FiHome,
-  FiUsers,
   FiCreditCard,
   FiShoppingBag,
   FiShoppingCart,
-  FiBarChart2,
   FiSettings,
   FiChevronDown,
   FiChevronRight,
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import { MdAddCard,  MdSpaceDashboard } from "react-icons/md";
+import {
+  PiUserCheckDuotone,
+  PiUsersDuotone,
+} from "react-icons/pi";
+import useAuth from "../../hooks/useAuth";
+import { HiCreditCard } from "react-icons/hi";
+import { IoBagAdd } from "react-icons/io5";
+import {  BiSolidCategory, } from "react-icons/bi";
 
 const menuItems = [
   {
-    title: "Dashboard",
-    icon: <FiHome className="w-5 h-5" />,
-    path: "/admin/dashboard",
-  },
-  {
-    title: "User Management",
-    icon: <FiUsers className="w-5 h-5" />,
-    path: "/admin/users",
-    submenu: [
-      { title: "All Users", path: "/admin/users" },
-      { title: "Add New User", path: "/admin/users/new" },
+    category: "Dashboard",
+    items: [
+      {
+        title: "Admin Dashboard",
+        icon: <MdSpaceDashboard className="w-5 h-5" />,
+        path: "/admin/dashboard",
+      },
     ],
   },
   {
-    title: "Membership Plans",
-    icon: <FiCreditCard className="w-5 h-5" />,
-    path: "/admin/plans",
-    submenu: [
-      { title: "All Plans", path: "/admin/plans" },
-      { title: "Add New Plan", path: "/admin/plans/new" },
+    category: "User Management",
+    items: [
+      {
+        title: "All Users",
+        icon: <PiUsersDuotone className="w-5 h-5" />,
+        path: "/admin/users",
+      },
+      {
+        title: "Add New User",
+        icon: <PiUserCheckDuotone className="w-5 h-5" />,
+        path: "/admin/users/new",
+      },
     ],
   },
   {
-    title: "Subscriptions",
-    icon: <FiBarChart2 className="w-5 h-5" />,
-    path: "/admin/subscriptions",
-  },
-  {
-    title: "Products",
-    icon: <FiShoppingBag className="w-5 h-5" />,
-    path: "/admin/products",
-    submenu: [
-      { title: "All Products", path: "/admin/products" },
-      { title: "Add New Product", path: "/admin/products/new" },
-      { title: "Categories", path: "/admin/products/categories" },
+    category: "Subscriptions",
+    items: [
+      {
+        title: "All Subscriptions",
+        icon: <HiCreditCard className="w-6 h-6" />,
+        path: "/admin/subscriptions",
+      },
+      {
+        title: "Add New Subscritption",
+        icon: <MdAddCard className="w-6 h-6" />,
+        path: "/admin/plans/new",
+      },
     ],
   },
   {
-    title: "Orders",
-    icon: <FiShoppingCart className="w-5 h-5" />,
-    path: "/admin/orders",
+    category: "Membership Plans",
+    items: [
+      {
+        title: "All Plans",
+        icon: <FiCreditCard className="w-5 h-5" />,
+        path: "/admin/plans",
+      },
+      {
+        title: "Add New Plan",
+        icon: <FiCreditCard className="w-5 h-5" />,
+        path: "/admin/plans/new",
+      },
+    ],
+  },
+
+  {
+    category: "Store Products",
+    items: [
+      {
+        title: "All Products",
+        icon: <FiShoppingBag className="w-5 h-5" />,
+        path: "/admin/products",
+      },
+      {
+        title: "Add New Product",
+        icon: <IoBagAdd className="w-5 h-5" />,
+        path: "/admin/products/new",
+      },
+      {
+        title: "Categories",
+        icon: <BiSolidCategory className="w-5 h-5" />,
+        path: "/admin/products/categories",
+      },
+    ],
   },
   {
-    title: "Settings",
-    icon: <FiSettings className="w-5 h-5" />,
-    path: "/admin/settings",
+    category: "Store Orders",
+    items: [
+      {
+        title: "Orders",
+        icon: <FiShoppingCart className="w-5 h-5" />,
+        path: "/admin/orders",
+      },
+    ],
+  },
+  {
+    category: "Settings",
+    items: [
+      {
+        title: "Settings",
+        icon: <FiSettings className="w-5 h-5" />,
+        path: "/admin/settings",
+      },
+    ],
   },
 ];
 
 const Sidebar = ({ isMobile, onClose }) => {
+  const { currentUser } = useAuth();
   const location = useLocation();
-  const [expandedMenus, setExpandedMenus] = useState({});
+  // Initialize with all categories expanded
+  const [collapsedCategories, setCollapsedCategories] = useState({});
 
-  const toggleSubmenu = (title) => {
-    setExpandedMenus((prev) => ({
+  const toggleCategory = (category) => {
+    setCollapsedCategories((prev) => ({
       ...prev,
-      [title]: !prev[title],
+      [category]: !prev[category],
     }));
-  };
-
-  // Check if a menu item should be expanded based on current path
-  const shouldExpandMenu = (item) => {
-    if (!item.submenu) return false;
-
-    return item.submenu.some(
-      (subItem) =>
-        location.pathname === subItem.path || expandedMenus[item.title]
-    );
   };
 
   return (
@@ -98,103 +144,94 @@ const Sidebar = ({ isMobile, onClose }) => {
     >
       {isMobile && (
         <div className="flex justify-between items-center p-4 border-b border-zinc-700">
-          <h2 className="text-xl font-bold text-white">Admin Panel</h2>
+          <h2 className="text-xl font-bold text-white">Admin Management Console</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <FiX className="w-6 h-6" />
           </button>
         </div>
       )}
 
-      <div className={`p-4 ${!isMobile ? "border-b border-zinc-700" : ""}`}>
+      <div
+        className={`px-4 py-2 ${
+          !isMobile ? "border-b border-zinc-900/40 bg-secondary/40" : ""
+        }`}
+      >
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white font-bold">EF</span>
+          <div className=" ">
+            <img
+              src="/images/logo-gym.png"
+              alt="gym-logo"
+              className="w-12 h-12"
+            />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Elite Fitness</h2>
-            <p className="text-xs text-gray-400">Admin Panel</p>
+            <h2 className="text-lg font-extrabold font-nunito text-white">
+              Elite Fitness
+            </h2>
+            <p className="text-xs text-gray-400">Admin Management Console</p>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-auto py-1">
         <ul className="space-y-1 px-3">
-          {menuItems.map((item) => (
-            <li key={item.title}>
-              {item.submenu ? (
-                <div className="mb-1">
-                  <button
-                    onClick={() => toggleSubmenu(item.title)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      shouldExpandMenu(item)
-                        ? "bg-zinc-700 text-white"
-                        : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      {item.icon}
-                      <span className="ml-3">{item.title}</span>
-                    </div>
-                    {shouldExpandMenu(item) ? (
-                      <FiChevronDown className="w-4 h-4" />
-                    ) : (
-                      <FiChevronRight className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  {shouldExpandMenu(item) && (
-                    <ul className="mt-1 ml-4 pl-4 border-l border-zinc-700 space-y-1">
-                      {item.submenu.map((subItem) => (
-                        <li key={subItem.title}>
-                          <NavLink
-                            to={subItem.path}
-                            className={({ isActive }) =>
-                              `block px-3 py-2 rounded-lg text-sm transition-colors ${
-                                isActive
-                                  ? "bg-primary/10 text-primary"
-                                  : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
-                              }`
-                            }
-                            onClick={isMobile ? onClose : undefined}
-                          >
-                            {subItem.title}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
+          {menuItems.map((category) => (
+            <div key={category.category} className="mb-6">
+              <div
+                className="flex justify-between items-center text-gray-500 text-[0.65rem] font-sans uppercase mb-1 mt-6 px-4 cursor-pointer group"
+                onClick={() => toggleCategory(category.category)}
+              >
+                <span>{category.category}</span>
+                <button className="text-gray-500 hover:text-white">
+                  {collapsedCategories[category.category] ? (
+                    <FiChevronRight className="w-4 h-4" />
+                  ) : (
+                    <FiChevronDown className="w-4 h-4" />
                   )}
+                </button>
+              </div>
+
+              {!collapsedCategories[category.category] && (
+                <div className="">
+                  {category.items.map((item) => (
+                    <li key={item.title}>
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `flex items-center px-3 py-2.5 rounded-lg text-sm font-semibold font-geist transition-colors ${
+                            isActive
+                              ? "bg-primary/20 text-amber-500"
+                              : "text-gray-300 hover:text-white hover:bg-zinc-700/50"
+                          }`
+                        }
+                        onClick={isMobile ? onClose : undefined}
+                      >
+                        {item.icon}
+                        <span className="ml-3">{item.title}</span>
+                      </NavLink>
+                    </li>
+                  ))}
                 </div>
-              ) : (
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
-                    }`
-                  }
-                  onClick={isMobile ? onClose : undefined}
-                >
-                  {item.icon}
-                  <span className="ml-3">{item.title}</span>
-                </NavLink>
               )}
-            </li>
+            </div>
           ))}
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-zinc-700">
+      <div className="p-2 border-t border-zinc-700">
         <div className="bg-zinc-700/30 rounded-lg p-3">
-          <p className="text-xs text-gray-400 mb-2">Logged in as</p>
+          <p className="text-[0.65rem] text-gray-400 mb-2">Logged in as</p>
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-full bg-zinc-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">A</span>
+              <span className="text-white text-xs font-bold">E.O</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-white">Admin User</p>
-              <p className="text-xs text-gray-400">admin@example.com</p>
+              <p className="text-sm font-bold font-geist  text-white">
+                {currentUser?.name || "Admin User"}
+              </p>
+              <p className="text-xs text-gray-400">
+                {currentUser?.email || "admin@elitefitness.com"}
+              </p>
             </div>
           </div>
         </div>

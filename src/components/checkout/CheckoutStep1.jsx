@@ -19,7 +19,7 @@ const CheckoutStep1 = ({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-white">Order Details</h3>
+      <h3 className="text-xl font-bold text-white">Order Details & Delivery</h3>
 
       {/* Personal Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -86,7 +86,7 @@ const CheckoutStep1 = ({
 
       {/* Delivery Method */}
       <div className="pt-6 border-t border-zinc-700">
-        <h3 className="text-xl font-bold text-white mb-4">Delivery Method</h3>
+       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div
             className={`border rounded-xl p-4 cursor-pointer transition-all ${

@@ -265,6 +265,80 @@ const Orders = () => {
         <h1 className="text-2xl font-bold text-white">Orders</h1>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+        {/* Total Orders */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Total Orders</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {totalOrders}
+              </h3>
+            </div>
+            <div className="bg-blue-500/10 p-3 rounded-lg">
+              <FiPackage className="text-blue-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Total Revenue */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Total Revenue</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {formatCurrency(
+                  filteredOrders.reduce(
+                    (total, order) => total + order.totalAmount,
+                    0
+                  )
+                )}
+              </h3>
+            </div>
+            <div className="bg-green-500/10 p-3 rounded-lg">
+              <FiDollarSign className="text-green-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Pending Orders */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Pending Orders</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredOrders.filter((order) => order.status === "pending")
+                    .length
+                }
+              </h3>
+            </div>
+            <div className="bg-yellow-500/10 p-3 rounded-lg">
+              <FiClock className="text-yellow-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Completed Orders */}
+        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Completed Orders</p>
+              <h3 className="text-xl font-bold text-white mt-1">
+                {
+                  filteredOrders.filter((order) => order.status === "completed")
+                    .length
+                }
+              </h3>
+            </div>
+            <div className="bg-teal-500/10 p-3 rounded-lg">
+              <FiPackage className="text-teal-500 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
         <div className="flex flex-wrap gap-4">
@@ -504,80 +578,6 @@ const Orders = () => {
           </div>
         </div>
       )}
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        {/* Total Orders */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Orders</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {totalOrders}
-              </h3>
-            </div>
-            <div className="bg-blue-500/10 p-3 rounded-lg">
-              <FiPackage className="text-blue-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Total Revenue */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Total Revenue</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {formatCurrency(
-                  filteredOrders.reduce(
-                    (total, order) => total + order.totalAmount,
-                    0
-                  )
-                )}
-              </h3>
-            </div>
-            <div className="bg-green-500/10 p-3 rounded-lg">
-              <FiDollarSign className="text-green-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Pending Orders */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Pending Orders</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredOrders.filter((order) => order.status === "pending")
-                    .length
-                }
-              </h3>
-            </div>
-            <div className="bg-yellow-500/10 p-3 rounded-lg">
-              <FiClock className="text-yellow-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Completed Orders */}
-        <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Completed Orders</p>
-              <h3 className="text-xl font-bold text-white mt-1">
-                {
-                  filteredOrders.filter((order) => order.status === "completed")
-                    .length
-                }
-              </h3>
-            </div>
-            <div className="bg-teal-500/10 p-3 rounded-lg">
-              <FiPackage className="text-teal-500 w-5 h-5" />
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
