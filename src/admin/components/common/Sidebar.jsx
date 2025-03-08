@@ -199,7 +199,7 @@ const Sidebar = ({ isMobile, onClose }) => {
                         className={({ isActive }) =>
                           `flex items-center px-3 py-2.5 rounded-lg text-sm font-semibold font-geist transition-colors ${
                             isActive
-                              ? "bg-primary/20 text-amber-500"
+                              ? "bg-primary/30 text-amber-500"
                               : "text-gray-300 hover:text-white hover:bg-zinc-700/50"
                           }`
                         }

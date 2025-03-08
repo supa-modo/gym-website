@@ -11,6 +11,7 @@ import {
   FiX,
   FiSave,
 } from "react-icons/fi";
+import categoryAPI from "../utils/categoryAPI";
 
 // Sample categories data
 const sampleCategories = [
@@ -38,37 +39,27 @@ const ProductCategories = () => {
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    description: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        setError(null);
-
-        // In a real app, you would fetch data from your API
-        // const response = await api.get('/product-categories');
-        // setCategories(response.data);
-
-        // Simulate API call
-        setTimeout(() => {
-          setCategories(sampleCategories);
-          setIsLoading(false);
-        }, 500);
+        const response = await categoryAPI.getAll();
+        setCategories(response);
       } catch (err) {
         console.error("Error fetching categories:", err);
         setError("Failed to fetch categories. Please try again.");
+      } finally {
         setIsLoading(false);
       }
     };
-
     fetchCategories();
   }, []);
-
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,6 +107,10 @@ const ProductCategories = () => {
         "Slug can only contain lowercase letters, numbers, and hyphens";
     }
 
+    if (formData.description.length > 500) {
+      errors.description = "Description must be less than 500 characters";
+    }
+
     // Check if slug is unique (except when editing the same category)
     const slugExists = categories.some(
       (category) =>
@@ -136,6 +131,7 @@ const ProductCategories = () => {
     setFormData({
       name: "",
       slug: "",
+      description: "",
     });
     setFormErrors({});
     setShowAddModal(true);
@@ -147,6 +143,7 @@ const ProductCategories = () => {
     setFormData({
       name: category.name,
       slug: category.slug,
+      description: category.description || "",
     });
     setFormErrors({});
     setShowEditModal(true);
@@ -168,31 +165,21 @@ const ProductCategories = () => {
 
     try {
       setIsSubmitting(true);
+      const response = await categoryAPI.create({
+        name: formData.name,
+        slug: formData.slug,
+        description: formData.description,
+      });
+      setCategories([...categories, response]);
+      setShowAddModal(false);
+      setSuccess("Category added successfully!");
 
-      // In a real app, you would call your API
-      // const response = await api.post('/product-categories', formData);
-      // const newCategory = response.data;
-
-      // Simulate API call
+      // Clear success message after 3 seconds
       setTimeout(() => {
-        const newCategory = {
-          id: Math.max(...categories.map((c) => c.id), 0) + 1,
-          name: formData.name,
-          slug: formData.slug,
-          productCount: 0,
-        };
+        setSuccess(null);
+      }, 3000);
 
-        setCategories((prev) => [...prev, newCategory]);
-        setShowAddModal(false);
-        setSuccess("Category added successfully!");
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-
-        setIsSubmitting(false);
-      }, 500);
+      setIsSubmitting(false);
     } catch (err) {
       console.error("Error adding category:", err);
       setError("Failed to add category. Please try again.");
@@ -210,31 +197,33 @@ const ProductCategories = () => {
 
     try {
       setIsSubmitting(true);
+      const response = await categoryAPI.update(categoryToEdit.id, {
+        name: formData.name,
+        slug: formData.slug,
+        description: formData.description,
+      });
+      setCategories((prev) =>
+        prev.map((category) =>
+          category.id === categoryToEdit.id
+            ? {
+                ...category,
+                name: formData.name,
+                slug: formData.slug,
+                description: formData.description,
+              }
+            : category
+        )
+      );
+      setShowEditModal(false);
+      setCategoryToEdit(null);
+      setSuccess("Category updated successfully!");
 
-      // In a real app, you would call your API
-      // await api.put(`/product-categories/${categoryToEdit.id}`, formData);
-
-      // Simulate API call
+      // Clear success message after 3 seconds
       setTimeout(() => {
-        setCategories((prev) =>
-          prev.map((category) =>
-            category.id === categoryToEdit.id
-              ? { ...category, name: formData.name, slug: formData.slug }
-              : category
-          )
-        );
+        setSuccess(null);
+      }, 3000);
 
-        setShowEditModal(false);
-        setCategoryToEdit(null);
-        setSuccess("Category updated successfully!");
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-
-        setIsSubmitting(false);
-      }, 500);
+      setIsSubmitting(false);
     } catch (err) {
       console.error("Error updating category:", err);
       setError("Failed to update category. Please try again.");
@@ -246,27 +235,20 @@ const ProductCategories = () => {
   const handleDeleteCategory = async () => {
     try {
       setIsSubmitting(true);
+      await categoryAPI.delete(categoryToDelete.id);
+      setCategories(
+        categories.filter((category) => category.id !== categoryToDelete.id)
+      );
+      setShowDeleteModal(false);
+      setCategoryToDelete(null);
+      setSuccess("Category deleted successfully!");
 
-      // In a real app, you would call your API
-      // await api.delete(`/product-categories/${categoryToDelete.id}`);
-
-      // Simulate API call
+      // Clear success message after 3 seconds
       setTimeout(() => {
-        setCategories((prev) =>
-          prev.filter((category) => category.id !== categoryToDelete.id)
-        );
+        setSuccess(null);
+      }, 3000);
 
-        setShowDeleteModal(false);
-        setCategoryToDelete(null);
-        setSuccess("Category deleted successfully!");
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-
-        setIsSubmitting(false);
-      }, 500);
+      setIsSubmitting(false);
     } catch (err) {
       console.error("Error deleting category:", err);
       setError("Failed to delete category. Please try again.");
@@ -321,16 +303,22 @@ const ProductCategories = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-zinc-700/30">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Slug
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Products
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-5 max-w-sm truncate text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-3 py-5 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -341,10 +329,16 @@ const ProductCategories = () => {
                 Array.from({ length: 4 }).map((_, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-zinc-700 rounded w-8 animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-32 animate-pulse"></div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="h-4 bg-zinc-700 rounded w-16 animate-pulse"></div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-16 animate-pulse"></div>
@@ -355,8 +349,11 @@ const ProductCategories = () => {
                   </tr>
                 ))
               ) : categories.length > 0 ? (
-                categories.map((category) => (
+                categories.map((category, index) => (
                   <tr key={category.id} className="hover:bg-zinc-700/20">
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
+                      {index + 1}.
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-white">
                         {category.name}
@@ -364,26 +361,32 @@ const ProductCategories = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-400">
-                        {category.slug}
+                        {category.slug || "Not Provided"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-400">
-                        {category.productCount}
+                        {category.productCount || "--"}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
+                    <td className="px-6 py-4 max-w-sm truncate whitespace-nowrap">
+                      <div className="text-sm text-gray-400">
+                        {category.description}
+                      </div>
+                    </td>
+                    <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end space-x-6">
                         <button
                           onClick={() => handleOpenEditModal(category)}
-                          className="text-yellow-500 hover:text-yellow-400 transition-colors"
+                          className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                           title="Edit Category"
                         >
                           <FiEdit2 className="w-4 h-4" />
+                          <span>Edit</span>
                         </button>
                         <button
                           onClick={() => handleOpenDeleteModal(category)}
-                          className={`text-red-500 hover:text-red-400 transition-colors ${
+                          className={`text-red-500 hover:text-red-400 transition-colors flex items-center space-x-1 ${
                             category.productCount > 0
                               ? "opacity-50 cursor-not-allowed"
                               : ""
@@ -392,6 +395,7 @@ const ProductCategories = () => {
                           disabled={category.productCount > 0}
                         >
                           <FiTrash2 className="w-4 h-4" />
+                          <span>Delete</span>
                         </button>
                       </div>
                     </td>
@@ -400,7 +404,7 @@ const ProductCategories = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     className="px-6 py-8 text-center text-gray-400"
                   >
                     No categories found. Click "Add New Category" to create one.
@@ -414,13 +418,13 @@ const ProductCategories = () => {
 
       {/* Add Category Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-md w-full"
+            className="bg-zinc-800 rounded-xl border border-zinc-700 p-8 max-w-2xl w-full"
           >
-            <h3 className="text-xl font-bold text-white mb-4">
+            <h3 className="text-xl font-bold text-white mb-6">
               Add New Category
             </h3>
 
@@ -481,20 +485,51 @@ const ProductCategories = () => {
                     letters, numbers, and hyphens.
                   </p>
                 </div>
+
+                {/* Category Description */}
+                <div>
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className={`w-full bg-zinc-700/50 border ${
+                      formErrors.description
+                        ? "border-red-500"
+                        : "border-zinc-600"
+                    } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
+                    placeholder="Enter category description (optional)"
+                  ></textarea>
+                  {formErrors.description && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.description}
+                    </p>
+                  )}
+                  <p className="text-gray-400 text-xs mt-1">
+                    Max 500 characters. This will be shown on the category page.
+                  </p>
+                </div>
               </div>
 
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                  className="px-8 py-2 bg-zinc-700 text-white font-semibold text-sm md:text-base rounded-lg hover:bg-zinc-600 transition-colors"
                   disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+                  className="px-4 py-2 bg-primary text-white font-semibold text-sm md:text-base rounded-lg hover:bg-red-700 transition-colors flex items-center"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -504,7 +539,7 @@ const ProductCategories = () => {
                     </>
                   ) : (
                     <>
-                      <FiSave className="w-4 h-4 mr-2" />
+                      <FiSave className="w-5 h-5 mr-2" />
                       Add Category
                     </>
                   )}
@@ -517,11 +552,11 @@ const ProductCategories = () => {
 
       {/* Edit Category Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 backdrop-blur-sm flex items-center justify-center p-4 bg-black/50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-md w-full"
+            className="bg-zinc-800 rounded-xl border border-zinc-700 p-8 max-w-2xl w-full"
           >
             <h3 className="text-xl font-bold text-white mb-4">Edit Category</h3>
 
@@ -580,20 +615,51 @@ const ProductCategories = () => {
                     letters, numbers, and hyphens.
                   </p>
                 </div>
+
+                {/* Category Description */}
+                <div>
+                  <label
+                    htmlFor="edit-description"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="edit-description"
+                    name="description"
+                    rows="3"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className={`w-full bg-zinc-700/50 border ${
+                      formErrors.description
+                        ? "border-red-500"
+                        : "border-zinc-600"
+                    } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
+                    placeholder="Enter category description (optional)"
+                  ></textarea>
+                  {formErrors.description && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.description}
+                    </p>
+                  )}
+                  <p className="text-gray-400 text-xs mt-1">
+                    Max 500 characters. This will be shown on the category page.
+                  </p>
+                </div>
               </div>
 
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                  className="px-8 py-2 bg-zinc-700 text-white text-sm md:text-base font-semibold rounded-lg hover:bg-zinc-600 transition-colors"
                   disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+                  className="px-4 py-2 bg-primary text-white text-sm md:text-base font-semibold rounded-lg hover:bg-red-700 transition-colors flex items-center"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -646,14 +712,14 @@ const ProductCategories = () => {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                className="px-8 py-2 bg-zinc-700 text-sm md:text-base font-semibold text-white rounded-lg hover:bg-zinc-600 transition-colors"
                 disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteCategory}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+                className="px-4 py-2 bg-red-600 text-white text-sm md:text-base font-semibold rounded-lg hover:bg-red-700 transition-colors flex items-center"
                 disabled={isSubmitting || categoryToDelete?.productCount > 0}
               >
                 {isSubmitting ? (

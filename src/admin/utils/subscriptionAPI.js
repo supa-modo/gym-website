@@ -52,6 +52,18 @@ const subscriptionAPI = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Renew a subscription
+  renew: async (id, months) => {
+    try {
+      const response = await api.patch(`/subscriptions/${id}/renew`, {
+        months,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default subscriptionAPI;

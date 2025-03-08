@@ -317,7 +317,7 @@ const Subscriptions = () => {
                   {/* Status Badge */}
                   <div className="flex justify-between items-start mb-3">
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
+                      className={`px-4 py-1 text-xs rounded-lg ${getStatusColor(
                         subscription.status
                       )}`}
                     >
@@ -386,7 +386,7 @@ const Subscriptions = () => {
                     onClick={() =>
                       navigate(`/admin/subscriptions/${subscription.id}`)
                     }
-                    className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg text-sm flex items-center transition-colors"
+                    className="bg-zinc-700 hover:bg-zinc-600 text-white px-5 py-1 rounded-lg text-sm flex items-center transition-colors"
                   >
                     <FiEye className="w-4 h-4 mr-1" />
                     Details

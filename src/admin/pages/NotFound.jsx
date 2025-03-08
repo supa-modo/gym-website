@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHome, FiAlertTriangle } from "react-icons/fi";
+import { BiSolidDashboard } from "react-icons/bi";
 
 const NotFound = () => {
   return (
@@ -29,7 +30,7 @@ const NotFound = () => {
             whileTap={{ scale: 0.95 }}
             className="bg-primary hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 mx-auto transition-colors"
           >
-            <FiHome className="w-5 h-5" />
+            <BiSolidDashboard className="w-5 h-5" />
             <span className="font-semibold">Back to Dashboard</span>
           </motion.button>
         </Link>

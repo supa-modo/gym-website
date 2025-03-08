@@ -9,7 +9,7 @@ import {
   FiTrash2,
   FiArrowLeft,
 } from "react-icons/fi";
-import { productAPI } from "../utils/api";
+import productAPI from "../utils/productAPI";
 
 // Sample categories
 const categories = [
@@ -50,40 +50,22 @@ const ProductForm = () => {
       try {
         setIsFetching(true);
         setError(null);
+        const product = await productAPI.getById(id);
 
-        // In a real app, you would fetch data from your API
-        // const response = await productAPI.getById(id);
-        // const product = response.data;
+        setFormData({
+          name: product.name || "",
+          price: product.price?.toString() || "",
+          category: product.category?.id || product.categoryId || "supplements",
+          stockQuantity: product.stockQuantity?.toString() || "",
+          description: product.description || "",
+          imageUrl: product.imageUrl || "",
+        });
 
-        // Simulate API call
-        setTimeout(() => {
-          // Mock product data
-          const product = {
-            id: parseInt(id),
-            name: "Premium Whey Protein",
-            price: 49.99,
-            category: "supplements",
-            stockQuantity: 120,
-            imageUrl: "https://via.placeholder.com/150",
-            description:
-              "High-quality whey protein for muscle recovery and growth.",
-          };
-
-          setFormData({
-            name: product.name,
-            price: product.price.toString(),
-            category: product.category,
-            stockQuantity: product.stockQuantity.toString(),
-            description: product.description,
-            imageUrl: product.imageUrl,
-          });
-
-          setImagePreview(product.imageUrl);
-          setIsFetching(false);
-        }, 500);
+        setImagePreview(product.imageUrl || "");
       } catch (err) {
         console.error("Error fetching product:", err);
         setError("Failed to fetch product data. Please try again.");
+      } finally {
         setIsFetching(false);
       }
     };
@@ -202,16 +184,14 @@ const ProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setIsLoading(true);
       setError(null);
       setSuccess(null);
 
-      // Prepare data for API
+      // Prepare product data
       const productData = {
         name: formData.name,
         price: parseFloat(formData.price),
@@ -221,35 +201,25 @@ const ProductForm = () => {
         imageUrl: formData.imageUrl,
       };
 
-      // In a real app, you would upload the image and then save the product
-      // if (imageFile) {
-      //   const formData = new FormData();
-      //   formData.append('image', imageFile);
-      //   const uploadResponse = await axios.post('/api/upload', formData);
-      //   productData.imageUrl = uploadResponse.data.imageUrl;
-      // }
+      // Upload image if new file exists
+      if (imageFile) {
+        const uploadResponse = await productAPI.uploadImage(imageFile);
+        productData.imageUrl = uploadResponse.imageUrl;
+      }
 
-      // Then save the product
-      // if (isEditMode) {
-      //   await productAPI.update(id, productData);
-      // } else {
-      //   await productAPI.create(productData);
-      // }
+      // Save product
+      if (isEditMode) {
+        await productAPI.update(id, productData);
+        setSuccess("Product updated successfully!");
+      } else {
+        await productAPI.create(productData);
+        setSuccess("Product created successfully!");
+      }
 
-      // Simulate API call
+      // Redirect after success
       setTimeout(() => {
-        setIsLoading(false);
-        setSuccess(
-          isEditMode
-            ? "Product updated successfully!"
-            : "Product created successfully!"
-        );
-
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate("/admin/products");
-        }, 1500);
-      }, 1000);
+        navigate("/admin/products");
+      }, 1500);
     } catch (err) {
       console.error("Error saving product:", err);
       setError(
@@ -257,6 +227,7 @@ const ProductForm = () => {
           ? "Failed to update product. Please try again."
           : "Failed to create product. Please try again."
       );
+    } finally {
       setIsLoading(false);
     }
   };

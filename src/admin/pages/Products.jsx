@@ -15,124 +15,19 @@ import {
   FiDollarSign,
   FiPackage,
 } from "react-icons/fi";
-import { productAPI } from "../utils/api";
-
-// Sample product data
-const sampleProducts = [
-  {
-    id: 1,
-    name: "Premium Whey Protein",
-    price: 49.99,
-    category: "supplements",
-    stockQuantity: 120,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "High-quality whey protein for muscle recovery and growth.",
-    createdAt: "2023-04-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    name: "Performance Pre-Workout",
-    price: 39.99,
-    category: "supplements",
-    stockQuantity: 85,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Boost your energy and focus for intense workouts.",
-    createdAt: "2023-04-16T11:45:00Z",
-  },
-  {
-    id: 3,
-    name: "Men's Training T-Shirt",
-    price: 24.99,
-    category: "clothing",
-    stockQuantity: 200,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Comfortable and breathable training t-shirt for men.",
-    createdAt: "2023-04-17T09:15:00Z",
-  },
-  {
-    id: 4,
-    name: "Women's Compression Leggings",
-    price: 34.99,
-    category: "clothing",
-    stockQuantity: 150,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "High-performance compression leggings for women.",
-    createdAt: "2023-04-18T14:20:00Z",
-  },
-  {
-    id: 5,
-    name: "Adjustable Dumbbell Set",
-    price: 199.99,
-    category: "equipment",
-    stockQuantity: 30,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Space-saving adjustable dumbbell set for home workouts.",
-    createdAt: "2023-04-19T16:30:00Z",
-  },
-  {
-    id: 6,
-    name: "Yoga Mat",
-    price: 29.99,
-    category: "accessories",
-    stockQuantity: 100,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Non-slip yoga mat for comfortable practice.",
-    createdAt: "2023-04-20T13:45:00Z",
-  },
-  {
-    id: 7,
-    name: "Shaker Bottle",
-    price: 9.99,
-    category: "accessories",
-    stockQuantity: 250,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Leak-proof shaker bottle for protein shakes and supplements.",
-    createdAt: "2023-04-21T10:15:00Z",
-  },
-  {
-    id: 8,
-    name: "Resistance Bands Set",
-    price: 19.99,
-    category: "equipment",
-    stockQuantity: 180,
-    imageUrl: "https://via.placeholder.com/150",
-    description:
-      "Versatile resistance bands for strength training and rehabilitation.",
-    createdAt: "2023-04-22T11:30:00Z",
-  },
-  {
-    id: 9,
-    name: "BCAA Supplement",
-    price: 29.99,
-    category: "supplements",
-    stockQuantity: 95,
-    imageUrl: "https://via.placeholder.com/150",
-    description: "Branch Chain Amino Acids for muscle recovery and endurance.",
-    createdAt: "2023-04-23T15:20:00Z",
-  },
-  {
-    id: 10,
-    name: "Gym Duffel Bag",
-    price: 44.99,
-    category: "accessories",
-    stockQuantity: 75,
-    imageUrl: "https://via.placeholder.com/150",
-    description:
-      "Spacious gym bag with multiple compartments for all your gear.",
-    createdAt: "2023-04-24T12:40:00Z",
-  },
-];
+import productAPI from "../utils/productAPI";
+import formatDate from "../utils/dateFormatter";
 
 const Products = () => {
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState(sampleProducts);
-  const [filteredProducts, setFilteredProducts] = useState(sampleProducts);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
-  const [totalProducts, setTotalProducts] = useState(sampleProducts.length);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -154,45 +49,27 @@ const Products = () => {
         setIsLoading(true);
         setError(null);
 
-        // In a real app, you would fetch data from your API
-        // const response = await productAPI.getAll({
-        //   page: currentPage,
-        //   limit: itemsPerPage,
-        //   category: selectedCategory !== 'all' ? selectedCategory : undefined,
-        //   search: searchQuery || undefined
-        // });
-        // setProducts(response.data.products);
-        // setTotalProducts(response.data.total);
+        const response = await productAPI.getAll({
+          page: currentPage,
+          limit: itemsPerPage,
+          category: selectedCategory !== "all" ? selectedCategory : undefined,
+          search: searchQuery || undefined,
+        });
 
-        // Simulate API call with filtering
-        let filtered = [...sampleProducts];
-
-        if (searchQuery) {
-          filtered = filtered.filter(
-            (product) =>
-              product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              product.description
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-          );
-        }
-
-        if (selectedCategory !== "all") {
-          filtered = filtered.filter(
-            (product) => product.category === selectedCategory
-          );
-        }
-
-        setFilteredProducts(filtered);
-        setTotalProducts(filtered.length);
-
-        // Simulate API delay
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
+        // Ensure we have an array of products
+        const products = Array.isArray(response.products)
+          ? response.products
+          : [];
+        setProducts(products);
+        setFilteredProducts(products);
+        setTotalProducts(response.total || products.length);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to fetch products. Please try again.");
+        setProducts([]);
+        setFilteredProducts([]);
+        setTotalProducts(0);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -212,33 +89,21 @@ const Products = () => {
 
     try {
       setIsLoading(true);
+      await productAPI.delete(productToDelete.id);
 
-      // In a real app, you would call your API
-      // await productAPI.delete(productToDelete.id);
-
-      // Simulate API call
       const updatedProducts = products.filter(
         (product) => product.id !== productToDelete.id
       );
       setProducts(updatedProducts);
-
-      // Update filtered products
-      const updatedFilteredProducts = filteredProducts.filter(
-        (product) => product.id !== productToDelete.id
-      );
-      setFilteredProducts(updatedFilteredProducts);
+      setFilteredProducts(updatedProducts);
       setTotalProducts((prev) => prev - 1);
 
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
-
-      // Simulate API delay
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
     } catch (err) {
       console.error("Error deleting product:", err);
       setError("Failed to delete product. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -247,17 +112,13 @@ const Products = () => {
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalProducts);
-  const currentProducts = filteredProducts.slice(startIndex, endIndex);
-
-  // Format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(date);
-  };
+  const currentProducts =
+    filteredProducts
+      ?.map((product) => ({
+        ...product,
+        category: product.category?.value || product.category,
+      }))
+      .slice(startIndex, endIndex) || [];
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -380,7 +241,7 @@ const Products = () => {
               transition={{ duration: 0.3 }}
               className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden flex flex-col"
             >
-              <div className="relative h-48 bg-zinc-700 overflow-hidden">
+              <div className="relative h-56 bg-zinc-700 overflow-hidden">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
@@ -388,12 +249,12 @@ const Products = () => {
                 />
                 <div className="absolute top-2 right-2">
                   <span
-                    className={`px-2 py-1 text-xs rounded-full ${
+                    className={`px-4 py-1 text-xs rounded-lg ${
                       product.stockQuantity > 50
-                        ? "bg-green-500/10 text-green-500"
+                        ? "bg-green-600 text-green-200"
                         : product.stockQuantity > 10
-                        ? "bg-yellow-500/10 text-yellow-500"
-                        : "bg-red-500/10 text-red-500"
+                        ? "bg-yellow-500 text-yellow-200"
+                        : "bg-red-500 text-red-500"
                     }`}
                   >
                     {product.stockQuantity > 50
@@ -406,24 +267,27 @@ const Products = () => {
               </div>
 
               <div className="p-4 flex-1">
-                <h3 className="text-lg font-medium text-white mb-1">
+                <h3 className="text-lg font-bold font-geist text-white mb-1">
                   {product.name}
                 </h3>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center mb-1">
                   <FiDollarSign className="text-primary mr-1 w-4 h-4" />
-                  <span className="text-lg font-bold text-white">
+                  <span className="text-lg font-bold font-nunito text-white">
                     {formatCurrency(product.price)}
                   </span>
                 </div>
-                <div className="mb-2">
-                  <span className="px-2 py-1 text-xs rounded-full bg-zinc-700 text-gray-300">
-                    {getCategoryLabel(product.category)}
-                  </span>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="">
+                    <span className="px-2 py-1 text-xs rounded-full bg-zinc-700 text-gray-300">
+                      {getCategoryLabel(product.category)}
+                    </span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-400">
+                    <FiPackage className="mr-1" />
+                    <span>{product.stockQuantity} in stock</span>
+                  </div>
                 </div>
-                <div className="flex items-center text-sm text-gray-400 mb-3">
-                  <FiPackage className="mr-1" />
-                  <span>{product.stockQuantity} in stock</span>
-                </div>
+
                 <p className="text-gray-400 text-sm line-clamp-2">
                   {product.description}
                 </p>

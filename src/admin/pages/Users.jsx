@@ -196,6 +196,9 @@ const Users = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-zinc-700/30">
+                <th className="px-4 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  #
+                </th>
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Name
                 </th>
@@ -208,7 +211,6 @@ const Users = () => {
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Phone No.
                 </th>
-
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Joined Date
                 </th>
@@ -224,6 +226,9 @@ const Users = () => {
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <tr key={index}>
+                    <td className="px-6 py-3 whitespace-nowrap">
+                      <div className="h-4 bg-zinc-700 rounded w-8 animate-pulse"></div>
+                    </td>
                     <td className="px-6 py-3 whitespace-nowrap">
                       <div className="h-4 bg-zinc-700 rounded w-24 animate-pulse"></div>
                     </td>
@@ -248,9 +253,12 @@ const Users = () => {
                   </tr>
                 ))
               ) : users.length > 0 ? (
-                users.map((user) => (
+                users.map((user, index) => (
                   <tr key={user.id} className="hover:bg-zinc-700/20">
-                    <td className="px-6 py-3.5 whitespace-nowrap">
+                    <td className="pl-5 py-3.5 whitespace-nowrap text-sm text-gray-400">
+                      {startIndex + index + 1}.
+                    </td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-8 h-8 rounded-full text-sm px-5 bg-zinc-700 flex items-center justify-center text-white font-medium">
                           {user.name
@@ -266,10 +274,10 @@ const Users = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5 whitespace-nowrap">
+                    <td className="px-4 py-3.5 whitespace-nowrap">
                       <div className="text-sm text-gray-400">{user.email}</div>
                     </td>
-                    <td className="px-6 py-3.5 whitespace-nowrap">
+                    <td className="px-4 py-3.5 whitespace-nowrap">
                       <span
                         className={`px-4 py-1 text-xs rounded-lg ${
                           user.role === "admin"
@@ -283,14 +291,14 @@ const Users = () => {
                       </span>
                     </td>
 
-                    <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-400">
+                    <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-400">
                       {user.phone || "Not Provided"}
                     </td>
-                    <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-400">
+                    <td className="px-4 py-3.5 whitespace-nowrap text-sm text-gray-400">
                       {formatDate(user.createdAt)}
                     </td>
 
-                    <td className="px-6 py-3.5 whitespace-nowrap">
+                    <td className="px-4 py-3.5 whitespace-nowrap">
                       <span
                         className={`px-4 py-1 text-xs rounded-lg ${
                           user.status === "active"
@@ -338,7 +346,7 @@ const Users = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="7"
                     className="px-6 py-3.5 whitespace-nowrap text-center text-gray-400"
                   >
                     No users found.

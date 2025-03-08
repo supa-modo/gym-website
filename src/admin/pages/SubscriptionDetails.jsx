@@ -107,23 +107,38 @@ const SubscriptionDetails = () => {
       setIsUpdating(true);
       setError(null);
       setSuccess(null);
-      await subscriptionAPI.extend(id, extensionMonths);
+
+      // Use renew API for expired/canceled subscriptions
+      if (
+        subscription.status === "expired" ||
+        subscription.status === "canceled"
+      ) {
+        await subscriptionAPI.renew(id, extensionMonths);
+      } else {
+        await subscriptionAPI.extend(id, extensionMonths);
+      }
+
+      // Update local state
+      const newEndDate = new Date(
+        new Date(subscription.endDate).setMonth(
+          new Date(subscription.endDate).getMonth() + extensionMonths
+        )
+      ).toISOString();
+
       setSubscription((prev) => ({
         ...prev,
-        endDate: new Date(
-          new Date(prev.endDate).setMonth(
-            new Date(prev.endDate).getMonth() + extensionMonths
-          )
-        ).toISOString(),
+        endDate: newEndDate,
+        status: "active",
       }));
+
       setSuccess(
-        `Subscription extended by ${extensionMonths} month${
-          extensionMonths > 1 ? "s" : ""
-        }!`
+        `Subscription ${
+          subscription.status === "active" ? "extended" : "renewed"
+        } by ${extensionMonths} month${extensionMonths > 1 ? "s" : ""}!`
       );
     } catch (err) {
-      console.error("Error extending subscription:", err);
-      setError("Failed to extend subscription. Please try again.");
+      console.error("Error extending/renewing subscription:", err);
+      setError("Failed to process subscription. Please try again.");
     } finally {
       setIsUpdating(false);
       setShowExtendModal(false);
@@ -192,7 +207,7 @@ const SubscriptionDetails = () => {
         <div className="flex space-x-2">
           <button
             onClick={handleSendEmail}
-            className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg text-sm flex items-center transition-colors"
+            className="bg-zinc-700 hover:bg-zinc-600 text-white px-8 py-3 rounded-lg text-sm flex items-center transition-colors"
           >
             <FiMail className="w-4 h-4 mr-2" />
             Email Customer
@@ -448,7 +463,7 @@ const SubscriptionDetails = () => {
 
                   <div className="pt-2">
                     <Link to={`/admin/users/${subscription.user.id}`}>
-                      <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg text-sm transition-colors w-full">
+                      <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2.5 font-semibold font-geist rounded-lg text-sm transition-colors w-full">
                         View Customer Profile
                       </button>
                     </Link>
@@ -494,7 +509,7 @@ const SubscriptionDetails = () => {
                     <>
                       <button
                         onClick={() => setShowExtendModal(true)}
-                        className="w-full bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-center"
+                        className="w-full bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2.5 font-semibold rounded-lg text-sm transition-colors flex items-center justify-center"
                       >
                         <FiCalendar className="w-4 h-4 mr-2" />
                         Extend Subscription
@@ -502,7 +517,7 @@ const SubscriptionDetails = () => {
 
                       <button
                         onClick={() => setShowCancelModal(true)}
-                        className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-center"
+                        className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2.5 font-semibold rounded-lg text-sm transition-colors flex items-center justify-center"
                       >
                         <FiX className="w-4 h-4 mr-2" />
                         Cancel Subscription

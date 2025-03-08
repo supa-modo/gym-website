@@ -57,14 +57,7 @@ export const userAPI = {
   getSubscriptions: (userId) => api.get(`/users/${userId}/subscriptions`),
 };
 
-// Products API
-export const productAPI = {
-  getAll: (params) => api.get("/products", { params }),
-  getById: (id) => api.get(`/products/${id}`),
-  create: (data) => api.post("/products", data),
-  update: (id, data) => api.put(`/products/${id}`, data),
-  delete: (id) => api.delete(`/products/${id}`),
-};
+
 
 // Orders API
 export const orderAPI = {

@@ -337,7 +337,7 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                       >
                         {activeTab === "description" && (
                           <div className="text-gray-300 space-y-4 text-sm md:text-base">
-                            <p >{product.description}</p>
+                            <p>{product.description}</p>
                             <p>
                               Experience the premium quality and exceptional
                               performance that our {product.name} offers.
