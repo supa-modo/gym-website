@@ -11,7 +11,7 @@ import {
   FiCalendar,
   FiClock,
 } from "react-icons/fi";
-import { dashboardAPI } from "../utils/api";
+import formatDate from "../utils/dateFormatter";
 
 // Sample data for charts and stats
 const sampleStats = {
@@ -131,26 +131,6 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  // Format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date);
-  };
-
-  // Format time
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }).format(date);
-  };
-
   // Format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
@@ -164,7 +144,7 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Page Title */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-white">Elite Fitness Admin Dashboard</h1>
         <div className="flex items-center space-x-2">
           <FiCalendar className="text-gray-400" />
           <span className="text-sm text-gray-400">

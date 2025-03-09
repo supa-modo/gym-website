@@ -17,7 +17,7 @@ const Settings = () => {
     siteDescription: "Premium fitness equipment and supplements",
     contactEmail: "contact@elitefitnessguru.com",
     contactPhone: "+1 (555) 123-4567",
-    address: "123 Fitness Ave, New York, NY 10001",
+    address: "123 Fitness Ave, Nairobi, Kenya",
   });
 
   // Email Settings
@@ -191,7 +191,7 @@ const Settings = () => {
         <div className="flex flex-wrap border-b border-zinc-700">
           <button
             onClick={() => setActiveTab("general")}
-            className={`px-4 py-3 text-sm font-medium flex items-center ${
+            className={`px-4 py-4 text-sm font-medium flex items-center ${
               activeTab === "general"
                 ? "bg-zinc-700 text-white"
                 : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
@@ -203,7 +203,7 @@ const Settings = () => {
 
           <button
             onClick={() => setActiveTab("email")}
-            className={`px-4 py-3 text-sm font-medium flex items-center ${
+            className={`px-4 py-4 text-sm font-medium flex items-center ${
               activeTab === "email"
                 ? "bg-zinc-700 text-white"
                 : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
@@ -215,7 +215,7 @@ const Settings = () => {
 
           <button
             onClick={() => setActiveTab("payment")}
-            className={`px-4 py-3 text-sm font-medium flex items-center ${
+            className={`px-4 py-4 text-sm font-medium flex items-center ${
               activeTab === "payment"
                 ? "bg-zinc-700 text-white"
                 : "text-gray-400 hover:text-white hover:bg-zinc-700/50"
@@ -227,7 +227,7 @@ const Settings = () => {
 
           <button
             onClick={() => setActiveTab("backup")}
-            className={`px-4 py-3 text-sm font-medium flex items-center ${
+            className={`px-4 py-4 text-sm font-medium flex items-center ${
               activeTab === "backup"
                 ? "bg-zinc-700 text-white"
                 : "text-gray-400 hover:text-white hover:bg-zinc-700/50"

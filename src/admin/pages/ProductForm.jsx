@@ -10,14 +10,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import productAPI from "../utils/productAPI";
-
-// Sample categories
-const categories = [
-  { value: "supplements", label: "Supplements" },
-  { value: "clothing", label: "Clothing" },
-  { value: "equipment", label: "Equipment" },
-  { value: "accessories", label: "Accessories" },
-];
+import { TbTrash } from "react-icons/tb";
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -41,6 +34,27 @@ const ProductForm = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  // Modify the categories state and fetch real categories
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await productAPI.getCategories();
+        setCategories(
+          categoriesData.map((cat) => ({
+            value: cat.name.toLowerCase(),
+            label: cat.name,
+            id: cat.id,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Fetch product data if in edit mode
   useEffect(() => {
@@ -55,7 +69,7 @@ const ProductForm = () => {
         setFormData({
           name: product.name || "",
           price: product.price?.toString() || "",
-          category: product.category?.id || product.categoryId || "supplements",
+          category: product.category,
           stockQuantity: product.stockQuantity?.toString() || "",
           description: product.description || "",
           imageUrl: product.imageUrl || "",
@@ -180,6 +194,12 @@ const ProductForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Add this function to convert category name to ID
+  const getCategoryIdByName = (categoryName) => {
+    const category = categories.find((cat) => cat.value === categoryName);
+    return category ? category.id : null;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -191,11 +211,11 @@ const ProductForm = () => {
       setError(null);
       setSuccess(null);
 
-      // Prepare product data
+      // Prepare product data with category ID
       const productData = {
         name: formData.name,
         price: parseFloat(formData.price),
-        category: formData.category,
+        categoryId: getCategoryIdByName(formData.category),
         stockQuantity: parseInt(formData.stockQuantity),
         description: formData.description,
         imageUrl: formData.imageUrl,
@@ -204,6 +224,9 @@ const ProductForm = () => {
       // Upload image if new file exists
       if (imageFile) {
         const uploadResponse = await productAPI.uploadImage(imageFile);
+        if (!uploadResponse.imageUrl) {
+          throw new Error("Image upload failed");
+        }
         productData.imageUrl = uploadResponse.imageUrl;
       }
 
@@ -241,7 +264,7 @@ const ProductForm = () => {
             onClick={() => navigate("/admin/products")}
             className="text-gray-400 hover:text-white transition-colors"
           >
-            <FiArrowLeft className="w-5 h-5" />
+            <FiArrowLeft className="w-6 h-6" />
           </button>
           <h1 className="text-2xl font-bold text-white">
             {isEditMode ? "Edit Product" : "Add New Product"}
@@ -324,7 +347,7 @@ const ProductForm = () => {
                         onClick={handleRemoveImage}
                         className="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
                       >
-                        <FiTrash2 className="w-4 h-4 mr-2" />
+                        <TbTrash className="w-4 h-4 mr-2" />
                         Remove Image
                       </button>
                     )}
@@ -494,7 +517,7 @@ const ProductForm = () => {
             <Link to="/admin/products">
               <button
                 type="button"
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors flex items-center"
+                className="px-4 py-2 bg-zinc-700 text-white font-semibold rounded-lg hover:bg-zinc-600 transition-colors flex items-center"
               >
                 <FiX className="w-4 h-4 mr-2" />
                 Cancel
@@ -506,7 +529,7 @@ const ProductForm = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className={`px-4 py-2 rounded-lg text-white flex items-center ${
+              className={`px-4 py-2 rounded-lg text-white font-semibold flex items-center ${
                 isLoading ? "bg-primary/70" : "bg-primary hover:bg-red-700"
               } transition-colors shadow-lg shadow-primary/20`}
             >

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api/users"; // Update with your backend URL
+const API_BASE_URL = "http://localhost:5000/api/users";
 
 const userAPI = {
   // Get all users

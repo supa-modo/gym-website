@@ -358,7 +358,7 @@ const Users = () => {
         </div>
       </div>
 
-      <div className="px-6 py-3 flex items-center justify-between border-t border-zinc-700">
+      <div className="px-2 py-3 flex items-center justify-between border-t border-zinc-700">
         <div className="text-sm text-gray-400">
           Showing{" "}
           <span className="font-medium text-white">{startIndex + 1}</span> to{" "}

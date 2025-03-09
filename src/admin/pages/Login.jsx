@@ -98,7 +98,7 @@ const Login = () => {
               />
             </div>
             <div className="text-center mb-5">
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-extrabold font-nunito tracking-tight text-white mb-2">
                 Elite Fitness Management Console
               </h1>
               <p className="text-gray-400 text-sm">

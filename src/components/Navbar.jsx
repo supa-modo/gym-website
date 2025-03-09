@@ -16,7 +16,8 @@ const Navbar = () => {
     { name: "Classes", href: "classes", type: "scroll" },
     { name: "Store", href: "/store", type: "router" },
     { name: "Pricing", href: "pricing", type: "scroll" },
-    { name: "Contact", href: "contact", type: "scroll" },
+    { name: "Contact Us", href: "contact", type: "scroll" },
+    { name: "Admin Login", href: "/admin", type: "router" },
   ];
 
   useEffect(() => {

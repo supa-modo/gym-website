@@ -17,21 +17,22 @@ import {
 } from "react-icons/fi";
 import productAPI from "../utils/productAPI";
 import formatDate from "../utils/dateFormatter";
+import { TbShoppingBagEdit, TbTrash } from "react-icons/tb";
 
 const Products = () => {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
-  const [totalProducts, setTotalProducts] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [error, setError] = useState(null);
+
+  // Add pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   // Categories for filter
   const categories = [
@@ -50,37 +51,27 @@ const Products = () => {
         setError(null);
 
         const response = await productAPI.getAll({
-          page: currentPage,
-          limit: itemsPerPage,
           category: selectedCategory !== "all" ? selectedCategory : undefined,
           search: searchQuery || undefined,
         });
 
-        // Ensure we have an array of products
-        const products = Array.isArray(response.products)
-          ? response.products
-          : [];
-        setProducts(products);
-        setFilteredProducts(products);
-        setTotalProducts(response.total || products.length);
+        console.log("Fetched products:", response); // Debug the fetched products
+        setProducts(response);
       } catch (err) {
         console.error("Error fetching products:", err);
         setError("Failed to fetch products. Please try again.");
         setProducts([]);
-        setFilteredProducts([]);
-        setTotalProducts(0);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProducts();
-  }, [currentPage, itemsPerPage, searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory]);
 
   // Handle search
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(1); // Reset to first page on new search
   };
 
   // Handle delete product
@@ -95,8 +86,6 @@ const Products = () => {
         (product) => product.id !== productToDelete.id
       );
       setProducts(updatedProducts);
-      setFilteredProducts(updatedProducts);
-      setTotalProducts((prev) => prev - 1);
 
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
@@ -108,17 +97,23 @@ const Products = () => {
     }
   };
 
-  // Calculate pagination
+  // Update the currentProducts calculation to use pagination
+  const totalProducts = products.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalProducts);
-  const currentProducts =
-    filteredProducts
-      ?.map((product) => ({
-        ...product,
-        category: product.category?.value || product.category,
-      }))
-      .slice(startIndex, endIndex) || [];
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = products
+    .map((product) => ({
+      ...product,
+      category: product.category?.value || product.category,
+    }))
+    .slice(startIndex, endIndex);
+
+  // Add items per page change handler
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -139,7 +134,9 @@ const Products = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-white">Product Management</h1>
+        <h1 className="text-2xl font-bold text-white">
+          Elite Store Product Management
+        </h1>
         <div className="flex gap-2">
           <Link to="/admin/products/categories">
             <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -206,14 +203,6 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3">
-          <FiAlertCircle className="text-red-500 flex-shrink-0" />
-          <p className="text-red-500">{error}</p>
-        </div>
-      )}
-
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {isLoading ? (
@@ -239,7 +228,8 @@ const Products = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden flex flex-col"
+              className="bg-zinc-800 rounded-xl border border-zinc-700 overflow-hidden flex flex-col hover:cursor-pointer"
+              onClick={() => navigate(`/admin/products/${product.id}`)}
             >
               <div className="relative h-56 bg-zinc-700 overflow-hidden">
                 <img
@@ -254,7 +244,7 @@ const Products = () => {
                         ? "bg-green-600 text-green-200"
                         : product.stockQuantity > 10
                         ? "bg-yellow-500 text-yellow-200"
-                        : "bg-red-500 text-red-500"
+                        : "bg-red-500 text-red-200"
                     }`}
                   >
                     {product.stockQuantity > 50
@@ -270,15 +260,14 @@ const Products = () => {
                 <h3 className="text-lg font-bold font-geist text-white mb-1">
                   {product.name}
                 </h3>
-                <div className="flex items-center mb-1">
-                  <FiDollarSign className="text-primary mr-1 w-4 h-4" />
+                <div className=" mb-1">
                   <span className="text-lg font-bold font-nunito text-white">
                     {formatCurrency(product.price)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="">
-                    <span className="px-2 py-1 text-xs rounded-full bg-zinc-700 text-gray-300">
+                    <span className="px-3 py-1 text-xs rounded-lg bg-zinc-700 text-gray-300">
                       {getCategoryLabel(product.category)}
                     </span>
                   </div>
@@ -293,35 +282,34 @@ const Products = () => {
                 </p>
               </div>
 
-              <div className="border-t border-zinc-700 p-4 flex justify-between items-center">
+              <div className="border-t border-zinc-700 px-4 py-3 flex justify-between items-center">
                 <span className="text-xs text-gray-400">
                   Added: {formatDate(product.createdAt)}
                 </span>
 
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => navigate(`/admin/products/${product.id}`)}
-                    className="text-blue-500 hover:text-blue-400 transition-colors"
-                    title="View Details"
-                  >
-                    <FiEye className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => navigate(`/admin/products/${product.id}`)}
-                    className="text-yellow-500 hover:text-yellow-400 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/admin/products/${product.id}`);
+                    }}
+                    className="px-4 py-1 rounded-md text-yellow-500 hover:text-yellow-400 bg-yellow-400/20 transition-colors flex items-center space-x-1 text-xs"
                     title="Edit Product"
                   >
-                    <FiEdit2 className="w-4 h-4" />
+                    <TbShoppingBagEdit className="w-4 h-4" />
+                    <span>Edit</span>
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setProductToDelete(product);
                       setIsDeleteModalOpen(true);
                     }}
-                    className="text-red-500 hover:text-red-400 transition-colors"
+                    className="px-4 py-1.5 rounded-md bg-red-500/20 text-red-500 hover:text-red-400 transition-colors flex items-center space-x-1 text-xs"
                     title="Delete Product"
                   >
-                    <FiTrash2 className="w-4 h-4" />
+                    <TbTrash className="w-4 h-4" />
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
@@ -341,9 +329,31 @@ const Products = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center mt-8">
+      {/* Bottom controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mt-8">
+        {/* Product count and items per page */}
+        <div className="flex items-center space-x-14 mb-4 sm:mb-0">
+          <span className="text-sm text-gray-400">
+            Showing {startIndex + 1} to {Math.min(endIndex, totalProducts)} of{" "}
+            {totalProducts} products
+          </span>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-400">Items per page:</span>
+            <select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              className="bg-zinc-700/50 border border-zinc-600 rounded-lg px-3 py-1 text-white text-xs font-bold focus:outline-none focus:border-primary"
+            >
+              <option value={12}>12</option>
+              <option value={24}>24</option>
+              <option value={48}>48</option>
+              <option value={96}>96</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Pagination controls */}
+        {totalPages > 1 && (
           <div className="flex space-x-2">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -405,8 +415,8 @@ const Products = () => {
               <FiChevronRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
