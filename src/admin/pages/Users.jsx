@@ -84,18 +84,19 @@ const Users = () => {
 
     try {
       setIsLoading(true);
-      await userAPI.delete(userToDelete.id);
+      await userAPI.update(userToDelete.id, { status: "inactive" });
 
       setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== userToDelete.id)
+        prevUsers.map((user) =>
+          user.id === userToDelete.id ? { ...user, status: "inactive" } : user
+        )
       );
-      setTotalUsers((prevTotal) => prevTotal - 1);
 
       setIsDeleteModalOpen(false);
       setUserToDelete(null);
     } catch (err) {
-      console.error("Error deleting user:", err);
-      setError("Failed to delete user. Please try again.");
+      console.error("Error deactivating user:", err);
+      setError("Failed to deactivate user. Please try again.");
     } finally {
       setIsLoading(false);
     }
