@@ -23,7 +23,7 @@ const Subscriptions = () => {
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedPlan, setSelectedPlan] = useState("all");
@@ -64,10 +64,20 @@ const Subscriptions = () => {
         setError(null);
         const response = await subscriptionAPI.getAll();
 
-        // Use the data directly from the API response
+        // Apply filters
+        let filtered = response;
+        if (selectedStatus !== "all") {
+          filtered = filtered.filter((sub) => sub.status === selectedStatus);
+        }
+        if (selectedPlan !== "all") {
+          filtered = filtered.filter(
+            (sub) => sub.plan?.id?.toString() === selectedPlan
+          );
+        }
+
         setSubscriptions(response);
-        setFilteredSubscriptions(response);
-        setTotalSubscriptions(response.length);
+        setFilteredSubscriptions(filtered);
+        setTotalSubscriptions(filtered.length);
       } catch (err) {
         console.error("Error fetching subscriptions:", err);
         setError("Failed to fetch subscriptions. Please try again.");
@@ -77,7 +87,7 @@ const Subscriptions = () => {
     };
 
     fetchSubscriptions();
-  }, []);
+  }, [selectedStatus, selectedPlan]);
 
   // Calculate pagination
   const totalPages = Math.ceil(totalSubscriptions / itemsPerPage);
@@ -178,15 +188,15 @@ const Subscriptions = () => {
           </div>
         </div>
 
-        {/* Canceled Subscriptions */}
+        {/* Cancelled Subscriptions */}
         <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400 text-sm">Canceled Subscriptions</p>
+              <p className="text-gray-400 text-sm">Cancelled Subscriptions</p>
               <h3 className="text-xl font-bold text-white mt-1">
                 {
                   filteredSubscriptions.filter(
-                    (sub) => sub.status === "canceled"
+                    (sub) => sub.status === "cancelled"
                   ).length
                 }
               </h3>

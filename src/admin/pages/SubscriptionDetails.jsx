@@ -31,8 +31,8 @@ const statusOptions = [
     icon: <FiX className="w-4 h-4" />,
   },
   {
-    value: "canceled",
-    label: "Canceled",
+    value: "cancelled",
+    label: "Cancelled",
     color: "bg-yellow-500/10 text-yellow-500",
     icon: <FiX className="w-4 h-4" />,
   },
@@ -89,7 +89,7 @@ const SubscriptionDetails = () => {
       setIsUpdating(true);
       setError(null);
       setSuccess(null);
-      await subscriptionAPI.cancel(id);
+      await subscriptionAPI.cancel(subscription.id);
       setSubscription((prev) => ({ ...prev, status: "cancelled" }));
       setSuccess("Subscription canceled successfully!");
     } catch (err) {
@@ -111,25 +111,35 @@ const SubscriptionDetails = () => {
       // Use renew API for expired/canceled subscriptions
       if (
         subscription.status === "expired" ||
-        subscription.status === "canceled"
+        subscription.status === "cancelled"
       ) {
         await subscriptionAPI.renew(id, extensionMonths);
+        // Update local state with new dates
+        const newStartDate = new Date().toISOString();
+        const newEndDate = new Date();
+        newEndDate.setMonth(newEndDate.getMonth() + extensionMonths);
+
+        setSubscription((prev) => ({
+          ...prev,
+          startDate: newStartDate,
+          endDate: newEndDate.toISOString(),
+          status: "active",
+        }));
       } else {
         await subscriptionAPI.extend(id, extensionMonths);
+        // Update local state with extended end date
+        const newEndDate = new Date(
+          new Date(subscription.endDate).setMonth(
+            new Date(subscription.endDate).getMonth() + extensionMonths
+          )
+        ).toISOString();
+
+        setSubscription((prev) => ({
+          ...prev,
+          endDate: newEndDate,
+          status: "active",
+        }));
       }
-
-      // Update local state
-      const newEndDate = new Date(
-        new Date(subscription.endDate).setMonth(
-          new Date(subscription.endDate).getMonth() + extensionMonths
-        )
-      ).toISOString();
-
-      setSubscription((prev) => ({
-        ...prev,
-        endDate: newEndDate,
-        status: "active",
-      }));
 
       setSuccess(
         `Subscription ${
@@ -535,7 +545,7 @@ const SubscriptionDetails = () => {
                     </button>
                   )}
 
-                  {subscription.status === "canceled" && (
+                  {subscription.status === "cancelled" && (
                     <button
                       onClick={() => setShowExtendModal(true)}
                       className="w-full bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-center"
@@ -555,7 +565,7 @@ const SubscriptionDetails = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-md w-full"
+                className="bg-zinc-800 rounded-xl border border-zinc-700 px-6 py-8 max-w-xl w-full"
               >
                 <h3 className="text-xl font-bold text-white mb-4">
                   Confirm Cancellation

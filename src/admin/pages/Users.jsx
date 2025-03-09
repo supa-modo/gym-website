@@ -50,7 +50,6 @@ const Users = () => {
         console.log("API response:", response);
 
         if (response && response.data) {
-          // Destructure data object
           const { users, total } = response.data;
 
           setUsers(users);
