@@ -227,6 +227,7 @@ const ProductForm = () => {
         if (!uploadResponse.imageUrl) {
           throw new Error("Image upload failed");
         }
+        // Ensure the image URL is from the backend
         productData.imageUrl = uploadResponse.imageUrl;
       }
 
