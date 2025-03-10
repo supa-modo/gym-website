@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  FiSave,
-  FiX,
-  FiAlertCircle,
-  FiUpload,
-  FiTrash2,
-  FiArrowLeft,
-} from "react-icons/fi";
+import { FiSave, FiX, FiAlertCircle, FiArrowLeft } from "react-icons/fi";
 import productAPI from "../utils/productAPI";
-import { TbCloudUpload, TbTrash } from "react-icons/tb";
+import { ProductImageUpload } from "./components/ProductImageUpload";
+import { ProductDetailsForm } from "./components/ProductDetailsForm";
+import { ProductVariants } from "./components/ProductVariants";
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -25,7 +20,39 @@ const ProductForm = () => {
     stockQuantity: "",
     description: "",
     imageUrl: "",
+    rating: 0,
+    features: [],
+    sizes: [],
+    colors: [],
+    hasSizeOptions: false,
+    hasColorOptions: false,
+    sizeType: "standard", // standard, volume, weight
   });
+
+  // New state for managing color inputs
+  const [newColor, setNewColor] = useState({ name: "", hex: "#000000" });
+
+  // New state for managing size inputs
+  const [newSize, setNewSize] = useState({ value: "", unit: "" });
+
+  // Define common size units based on size type
+  const sizeUnits = {
+    standard: [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL",
+      "5XL",
+      "6XL",
+      "One Size",
+    ],
+    volume: ["ml", "L", "fl oz", "gal"],
+    weight: ["g", "kg", "lb", "oz"],
+  };
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -34,7 +61,6 @@ const ProductForm = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  // Modify the categories state and fetch real categories
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -66,6 +92,23 @@ const ProductForm = () => {
         setError(null);
         const product = await productAPI.getById(id);
 
+        // Determine if product has size or color options
+        const hasSizeOptions = product.sizes && product.sizes.length > 0;
+        const hasColorOptions = product.colors && product.colors.length > 0;
+
+        // Determine size type based on existing sizes
+        let sizeType = "standard";
+        if (hasSizeOptions) {
+          const firstSize = product.sizes[0];
+          if (typeof firstSize === "object" && firstSize.unit) {
+            if (["ml", "L", "fl oz", "gal"].includes(firstSize.unit)) {
+              sizeType = "volume";
+            } else if (["g", "kg", "lb", "oz"].includes(firstSize.unit)) {
+              sizeType = "weight";
+            }
+          }
+        }
+
         setFormData({
           name: product.name || "",
           price: product.price?.toString() || "",
@@ -73,6 +116,13 @@ const ProductForm = () => {
           stockQuantity: product.stockQuantity?.toString() || "",
           description: product.description || "",
           imageUrl: product.imageUrl || "",
+          rating: product.rating || 0,
+          features: product.features || [],
+          sizes: product.sizes || [],
+          colors: product.colors || [],
+          hasSizeOptions,
+          hasColorOptions,
+          sizeType,
         });
 
         setImagePreview(product.imageUrl || "");
@@ -89,10 +139,11 @@ const ProductForm = () => {
 
   // Handle form input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
     // Clear error for this field
@@ -100,6 +151,162 @@ const ProductForm = () => {
       setErrors((prev) => ({
         ...prev,
         [name]: null,
+      }));
+    }
+  };
+
+  // Handle size type change
+  const handleSizeTypeChange = (e) => {
+    const { value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      sizeType: value,
+      // Reset sizes when changing type to avoid inconsistencies
+      sizes: [],
+    }));
+
+    setNewSize({ value: "", unit: "" });
+  };
+
+  // Handle new color change
+  const handleColorChange = (e) => {
+    const { name, value } = e.target;
+    setNewColor((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle new size change
+  const handleSizeChange = (e) => {
+    const { name, value } = e.target;
+    setNewSize((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Add a new color
+  const handleAddColor = () => {
+    if (!newColor.name.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        colorName: "Color name is required",
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      colors: [...prev.colors, { ...newColor }],
+    }));
+
+    // Reset color input
+    setNewColor({ name: "", hex: "#000000" });
+
+    // Clear error
+    if (errors.colorName) {
+      setErrors((prev) => ({
+        ...prev,
+        colorName: null,
+      }));
+    }
+  };
+
+  // Add a new size
+  const handleAddSize = () => {
+    if (!newSize.value.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        sizeValue: "Size value is required",
+      }));
+      return;
+    }
+
+    // For standard sizes, just use the value
+    if (formData.sizeType === "standard") {
+      setFormData((prev) => ({
+        ...prev,
+        sizes: [...prev.sizes, newSize.value],
+      }));
+    } else {
+      // For volume and weight, store as object with unit
+      if (!newSize.unit) {
+        setErrors((prev) => ({
+          ...prev,
+          sizeUnit: "Unit is required for this size type",
+        }));
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        sizes: [...prev.sizes, { ...newSize }],
+      }));
+    }
+
+    // Reset size input
+    setNewSize({ value: "", unit: "" });
+
+    // Clear errors
+    if (errors.sizeValue || errors.sizeUnit) {
+      setErrors((prev) => ({
+        ...prev,
+        sizeValue: null,
+        sizeUnit: null,
+      }));
+    }
+  };
+
+  // Remove a color
+  const handleRemoveColor = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      colors: prev.colors.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Remove a size
+  const handleRemoveSize = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Add quick color
+  const handleQuickAddColor = (color) => {
+    // Check if color exists and has a name property
+    if (!color || !color.name) {
+      console.error("Invalid color object:", color);
+      return;
+    }
+
+    // Check if color already exists
+    const colorExists = formData.colors.some(
+      (c) => c && c.name && c.name.toLowerCase() === color.name.toLowerCase()
+    );
+
+    if (!colorExists) {
+      setFormData((prev) => ({
+        ...prev,
+        colors: [...prev.colors, { ...color }],
+      }));
+    }
+  };
+
+  // Add quick standard size
+  const handleQuickAddSize = (sizeValue) => {
+    // Check if size already exists
+    const sizeExists = formData.sizes.some(
+      (s) => (typeof s === "string" ? s : s.value) === sizeValue
+    );
+
+    if (!sizeExists) {
+      setFormData((prev) => ({
+        ...prev,
+        sizes: [...prev.sizes, sizeValue],
       }));
     }
   };
@@ -194,7 +401,7 @@ const ProductForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Add this function to convert category name to ID
+  // Get category ID by name
   const getCategoryIdByName = (categoryName) => {
     const category = categories.find((cat) => cat.value === categoryName);
     return category ? category.id : null;
@@ -211,7 +418,7 @@ const ProductForm = () => {
       setError(null);
       setSuccess(null);
 
-      // Prepare product data with category ID
+      // Prepare product data
       const productData = {
         name: formData.name,
         price: parseFloat(formData.price),
@@ -219,6 +426,15 @@ const ProductForm = () => {
         stockQuantity: parseInt(formData.stockQuantity),
         description: formData.description,
         imageUrl: formData.imageUrl,
+        rating: formData.rating,
+        features: formData.features,
+        // Include sizes and colors only if they are enabled
+        sizes: formData.hasSizeOptions
+          ? formData.sizes.map((size) =>
+              typeof size === "string" ? size : `${size.value}${size.unit}`
+            )
+          : [],
+        colors: formData.hasColorOptions ? JSON.stringify(formData.colors) : [],
       };
 
       // Upload image if new file exists
@@ -227,8 +443,12 @@ const ProductForm = () => {
         if (!uploadResponse.imageUrl) {
           throw new Error("Image upload failed");
         }
-        // Ensure the image URL is from the backend
         productData.imageUrl = uploadResponse.imageUrl;
+      }
+
+      // If no colors are provided but hasColorOptions is true, add a default color
+      if (formData.hasColorOptions && productData.colors.length === 0) {
+        productData.colors = [{ name: "Default", hex: "#000000" }];
       }
 
       // Save product
@@ -302,221 +522,40 @@ const ProductForm = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Image Upload */}
             <div className="lg:col-span-1">
-              <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
-                <h2 className="text-lg font-medium text-white mb-4">
-                  Product Image
-                </h2>
-
-                <div className="space-y-4">
-                  {/* Image Preview */}
-                  <div className="aspect-square bg-zinc-700 rounded-lg overflow-hidden flex items-center justify-center">
-                    {imagePreview ? (
-                      <img
-                        src={imagePreview}
-                        alt="Product preview"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="text-center p-6">
-                        <FiUpload className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                        <p className="text-gray-400 text-sm">
-                          No image selected
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Upload Button */}
-                  <div className="flex flex-col space-y-2">
-                    <label
-                      htmlFor="image-upload"
-                      className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center cursor-pointer"
-                    >
-                      <div className="flex items-center space-x-2 justify-center">
-                      <TbCloudUpload className="w-5 h-5"/>
-                      <span>
-                      {imagePreview ? "Change Image" : "Upload Image"}  
-                      </span>
-                      
-                      </div>
-                      
-                    </label>
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-
-                    {imagePreview && (
-                      <button
-                        type="button"
-                        onClick={handleRemoveImage}
-                        className="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-                      >
-                        <TbTrash className="w-4 h-4 mr-2" />
-                        Remove Image
-                      </button>
-                    )}
-
-                    {errors.image && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.image}
-                      </p>
-                    )}
-
-                    <p className="text-gray-400 text-xs mt-2">
-                      Recommended size: 800x800 pixels. Max file size: 5MB.
-                      Supported formats: JPEG, PNG, GIF, WEBP.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <ProductImageUpload
+                imagePreview={imagePreview}
+                handleImageChange={handleImageChange}
+                handleRemoveImage={handleRemoveImage}
+                errors={errors}
+              />
             </div>
 
             {/* Right Column - Product Details */}
             <div className="lg:col-span-2">
-              <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
-                <h2 className="text-lg font-medium text-white mb-4">
-                  Product Details
-                </h2>
+              <ProductDetailsForm
+                formData={formData}
+                handleChange={handleChange}
+                errors={errors}
+                categories={categories}
+              />
 
-                <div className="space-y-4">
-                  {/* Product Name */}
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-300 mb-1"
-                    >
-                      Product Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`w-full bg-zinc-700/50 border ${
-                        errors.name ? "border-red-500" : "border-zinc-600"
-                      } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
-                      placeholder="Enter product name"
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                    )}
-                  </div>
-
-                  {/* Price and Category */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Price */}
-                    <div>
-                      <label
-                        htmlFor="price"
-                        className="block text-sm font-medium text-gray-300 mb-1"
-                      >
-                        Price ($) <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="price"
-                        name="price"
-                        type="text"
-                        value={formData.price}
-                        onChange={handleChange}
-                        className={`w-full bg-zinc-700/50 border ${
-                          errors.price ? "border-red-500" : "border-zinc-600"
-                        } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
-                        placeholder="0.00"
-                      />
-                      {errors.price && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {errors.price}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Category */}
-                    <div>
-                      <label
-                        htmlFor="category"
-                        className="block text-sm font-medium text-gray-300 mb-1"
-                      >
-                        Category <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                        className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-                      >
-                        {categories.map((category) => (
-                          <option key={category.value} value={category.value}>
-                            {category.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Stock Quantity */}
-                  <div>
-                    <label
-                      htmlFor="stockQuantity"
-                      className="block text-sm font-medium text-gray-300 mb-1"
-                    >
-                      Stock Quantity <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="stockQuantity"
-                      name="stockQuantity"
-                      type="number"
-                      min="0"
-                      value={formData.stockQuantity}
-                      onChange={handleChange}
-                      className={`w-full bg-zinc-700/50 border ${
-                        errors.stockQuantity
-                          ? "border-red-500"
-                          : "border-zinc-600"
-                      } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
-                      placeholder="Enter stock quantity"
-                    />
-                    {errors.stockQuantity && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.stockQuantity}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-300 mb-1"
-                    >
-                      Description <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      rows="5"
-                      value={formData.description}
-                      onChange={handleChange}
-                      className={`w-full bg-zinc-700/50 border ${
-                        errors.description
-                          ? "border-red-500"
-                          : "border-zinc-600"
-                      } rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors`}
-                      placeholder="Enter product description"
-                    ></textarea>
-                    {errors.description && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ProductVariants
+                formData={formData}
+                handleChange={handleChange}
+                handleSizeTypeChange={handleSizeTypeChange}
+                handleSizeChange={handleSizeChange}
+                handleAddSize={handleAddSize}
+                handleQuickAddSize={handleQuickAddSize}
+                handleRemoveSize={handleRemoveSize}
+                handleColorChange={handleColorChange}
+                handleAddColor={handleAddColor}
+                handleQuickAddColor={handleQuickAddColor}
+                handleRemoveColor={handleRemoveColor}
+                errors={errors}
+                newSize={newSize}
+                newColor={newColor}
+                sizeUnits={sizeUnits}
+              />
             </div>
           </div>
 

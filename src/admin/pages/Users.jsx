@@ -108,6 +108,11 @@ const Users = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalUsers);
 
+  // Add handleRowClick function
+  const handleRowClick = (userId) => {
+    navigate(`/admin/users/${userId}`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -196,15 +201,15 @@ const Users = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-zinc-700/30">
+              <tr className="bg-gray-700/60">
                 <th className="px-4 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   #
                 </th>
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Name
+                  User Name
                 </th>
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Email
+                  Email Address
                 </th>
                 <th className="px-6 py-5 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Role
@@ -255,7 +260,11 @@ const Users = () => {
                 ))
               ) : users.length > 0 ? (
                 users.map((user, index) => (
-                  <tr key={user.id} className="hover:bg-zinc-700/20">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-zinc-700/40 cursor-pointer"
+                    onClick={() => handleRowClick(user.id)}
+                  >
                     <td className="pl-5 py-3.5 whitespace-nowrap text-sm text-gray-400">
                       {startIndex + index + 1}.
                     </td>
@@ -312,7 +321,10 @@ const Users = () => {
                     </td>
 
                     <td className="px-4 py-3.5 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-6">
+                      <div
+                        className="flex justify-end space-x-6"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           onClick={() => navigate(`/admin/users/${user.id}`)}
                           className="text-blue-500 hover:text-blue-400 transition-colors flex items-center space-x-1"
@@ -322,7 +334,9 @@ const Users = () => {
                           <span>View</span>
                         </button>
                         <button
-                          onClick={() => navigate(`/admin/users/${user.id}`)}
+                          onClick={() =>
+                            navigate(`/admin/users/${user.id}/edit`)
+                          }
                           className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                           title="Edit User"
                         >
@@ -330,7 +344,8 @@ const Users = () => {
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setUserToDelete(user);
                             setIsDeleteModalOpen(true);
                           }}

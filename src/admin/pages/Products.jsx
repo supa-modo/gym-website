@@ -109,6 +109,10 @@ const Products = () => {
     .map((product) => ({
       ...product,
       category: product.category?.value || product.category,
+      features: product.features || [],
+      sizes: product.sizes || [],
+      colors: product.colors || [],
+      rating: product.rating || 0,
     }))
     .slice(startIndex, endIndex);
 
@@ -131,6 +135,18 @@ const Products = () => {
   const getCategoryLabel = (categoryValue) => {
     const category = categories.find((cat) => cat.value === categoryValue);
     return category ? category.label : categoryValue;
+  };
+
+  // Format color for display
+  const formatColor = (color) => {
+    if (typeof color === "string") {
+      try {
+        return JSON.parse(color);
+      } catch {
+        return { name: "Default", hex: "#000000" };
+      }
+    }
+    return color;
   };
 
   return (
@@ -207,7 +223,7 @@ const Products = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
         {isLoading ? (
           // Loading skeletons
           Array.from({ length: 8 }).map((_, index) => (
@@ -263,21 +279,130 @@ const Products = () => {
                 <h3 className="text-lg font-bold font-geist text-white mb-1">
                   {product.name}
                 </h3>
-                <div className=" mb-1">
+
+                {/* Price, Category, and Stock */}
+                <div className="flex justify-between items-center gap-2 mb-3">
                   <span className="text-lg font-bold font-nunito text-white">
                     {formatCurrency(product.price)}
                   </span>
-                </div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="">
-                    <span className="px-3 py-1 text-xs rounded-lg bg-zinc-700 text-gray-300">
+                  <div className="flex space-x-3">
+                    <span className="px-3 py-0.5 text-xs rounded-lg bg-gray-500 text-gray-300">
                       {getCategoryLabel(product.category)}
                     </span>
+                    <div className="flex items-center text-sm text-gray-400">
+                      <FiPackage className="mr-1" />
+                      <span>{product.stockQuantity} in stock</span>
+                    </div>
                   </div>
-                  <div className="flex items-center text-sm text-gray-400">
-                    <FiPackage className="mr-1" />
-                    <span>{product.stockQuantity} in stock</span>
-                  </div>
+                </div>
+
+                {/* Sizes and Colors */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {product.sizes &&
+                    product.sizes.length > 0 &&
+                    product.sizes[0] !== "default" && (
+                      <div className="flex items-center bg-zinc-700/50 rounded-lg px-2 py-0.5">
+                        <span className="text-xs text-gray-400 mr-1">
+                          Sizes:
+                        </span>
+                        <div className="flex items-center">
+                          {product.sizes
+                            .slice(0, 4)
+                            .map((size, index) => (
+                              <span
+                                key={index}
+                                className="text-xs text-gray-300 mx-0.5"
+                              >
+                                {size}
+                              </span>
+                            ))
+                            .reduce((prev, curr, i) => [
+                              prev,
+                              <span
+                                key={`sep-${i}`}
+                                className="text-gray-500 text-xs mx-0.5"
+                              >
+                                ·
+                              </span>,
+                              curr,
+                            ])}
+                          {product.sizes.length > 4 && (
+                            <span className="text-xs text-gray-400 ml-0.5">
+                              ...
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                  {product.colors &&
+                    product.colors.length > 0 &&
+                    product.colors[0] !== "default" && (
+                      <div className="flex items-center bg-zinc-700/50 rounded-lg px-2 py-0.5">
+                        <span className="text-xs text-gray-400 mr-1">
+                          Colors:
+                        </span>
+                        <div className="flex items-center">
+                          {product.colors.slice(0, 3).map((color, index) => {
+                            // Parse the color if it's a stringified JSON
+                            let colorObj = color;
+                            if (typeof color === "string") {
+                              try {
+                                colorObj = JSON.parse(color);
+                              } catch {
+                                // If parsing fails, treat it as a simple color name
+                                colorObj = { name: color, hex: "#000000" };
+                              }
+                            }
+
+                            // Handle both object and string color formats
+                            const colorHex =
+                              typeof colorObj === "object"
+                                ? colorObj.hex
+                                : colorObj === "black"
+                                ? "#222"
+                                : colorObj === "white"
+                                ? "#eee"
+                                : colorObj === "red"
+                                ? "#e53e3e"
+                                : colorObj === "blue"
+                                ? "#3182ce"
+                                : colorObj === "green"
+                                ? "#38a169"
+                                : colorObj === "purple"
+                                ? "#805ad5"
+                                : colorObj === "gray"
+                                ? "#718096"
+                                : colorObj === "navy"
+                                ? "#2c5282"
+                                : colorObj === "brown"
+                                ? "#9C4221"
+                                : colorObj === "pink"
+                                ? "#ed64a6"
+                                : "#cbd5e0";
+
+                            const colorName =
+                              typeof colorObj === "object"
+                                ? colorObj.name
+                                : colorObj;
+
+                            return (
+                              <div
+                                key={index}
+                                className="w-3 h-3 rounded-full mx-0.5 border border-zinc-600"
+                                style={{ backgroundColor: colorHex }}
+                                title={colorName}
+                              />
+                            );
+                          })}
+                          {product.colors.length > 3 && (
+                            <span className="text-xs text-gray-400 ml-0.5">
+                              ...
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                 </div>
 
                 <p className="text-gray-400 text-sm line-clamp-2">
@@ -297,7 +422,7 @@ const Products = () => {
                       navigate(`/admin/products/${product.id}`);
                     }}
                     className="px-4 py-1 rounded-md text-yellow-500 hover:text-yellow-400 bg-yellow-400/20 transition-colors flex items-center space-x-1 text-xs"
-                    title="Edit Product" 
+                    title="Edit Product"
                   >
                     <TbShoppingBagEdit className="w-4 h-4" />
                     <span>Edit</span>

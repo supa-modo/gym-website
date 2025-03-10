@@ -5,13 +5,8 @@ import {
   FiSave,
   FiArrowLeft,
   FiAlertCircle,
-  FiUser,
   FiMail,
-  FiPhone,
-  FiLock,
-  FiUpload,
   FiCheck,
-  FiTrash2,
 } from "react-icons/fi";
 import { userAPI } from "../utils/api";
 import {
@@ -20,19 +15,6 @@ import {
   PiUserDuotone,
 } from "react-icons/pi";
 import { TbTrash } from "react-icons/tb";
-
-// Sample user data
-const sampleUser = {
-  id: 1,
-  name: "John Doe",
-  email: "john@example.com",
-  role: "member",
-  phone: "+1 (555) 123-4567",
-  profilePicture: "https://via.placeholder.com/150",
-  status: "active",
-  createdAt: "2023-05-15T10:30:00Z",
-  updatedAt: "2023-05-15T15:45:00Z",
-};
 
 const UserForm = () => {
   const { id } = useParams();

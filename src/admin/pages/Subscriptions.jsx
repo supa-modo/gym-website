@@ -18,7 +18,12 @@ import {
 } from "react-icons/fi";
 import subscriptionAPI from "../utils/subscriptionAPI";
 import SubscriptionTable from "../components/SubscriptionTable";
-import { TbCalendarDot, TbLayoutGrid, TbListDetails, TbOctahedron } from "react-icons/tb";
+import {
+  TbCalendarDot,
+  TbLayoutGrid,
+  TbListDetails,
+  TbOctahedron,
+} from "react-icons/tb";
 import formatDate from "../utils/dateFormatter";
 import { MdPayments } from "react-icons/md";
 import { HiCreditCard } from "react-icons/hi";
@@ -276,41 +281,43 @@ const Subscriptions = () => {
               </form>
             </div>
 
-            {/* Status Filter */}
-            <div className="relative">
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
+            <div className="flex items-center space-x-4">
+              {/* Status Filter */}
+              <div className="relative">
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+                >
+                  {statusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
+                </div>
               </div>
-            </div>
 
-            {/* Plan Filter */}
-            <div className="relative">
-              <select
-                value={selectedPlan}
-                onChange={(e) => setSelectedPlan(e.target.value)}
-                className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-              >
-                {planOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
+              {/* Plan Filter */}
+              <div className="relative">
+                <select
+                  value={selectedPlan}
+                  onChange={(e) => setSelectedPlan(e.target.value)}
+                  className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+                >
+                  {planOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
+                </div>
               </div>
             </div>
           </div>
@@ -433,25 +440,25 @@ const Subscriptions = () => {
                     {/* Plan Details */}
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between">
-                      <div className="flex items-center text-sm">
-                        <TbOctahedron className="w-5 h-5 text-gray-400 mr-2" />
-                        <span className="text-white">{plan.name}</span>
-                      </div>
+                        <div className="flex items-center text-sm">
+                          <TbOctahedron className="w-5 h-5 text-gray-400 mr-2" />
+                          <span className="text-white">{plan.name}</span>
+                        </div>
 
-                      <div className="flex items-center text-sm">
-                        <TbCalendarDot className="w-5 h-5 text-amber-800 mr-2" />
-                        <span className="text-gray-400">
-                          {formatDate(subscription.startDate)} -{" "}
-                          {formatDate(subscription.endDate)}
-                        </span>
+                        <div className="flex items-center text-sm">
+                          <TbCalendarDot className="w-5 h-5 text-amber-800 mr-2" />
+                          <span className="text-gray-400">
+                            {formatDate(subscription.startDate)} -{" "}
+                            {formatDate(subscription.endDate)}
+                          </span>
+                        </div>
                       </div>
-                      </div>
-                      
 
                       <div className="flex items-center text-sm">
                         <MdPayments className="w-5 h-5 text-gray-400 mr-2" />
                         <span className="text-gray-400">
-                          Payment Method: {subscription.paymentMethod || 'Mpesa Mobile'}
+                          Payment Method:{" "}
+                          {subscription.paymentMethod || "Mpesa Mobile"}
                         </span>
                       </div>
                     </div>
