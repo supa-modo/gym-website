@@ -86,10 +86,10 @@ const Login = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="w-full max-w-xl relative z-20"
+        className="w-full max-w-lg relative z-20"
       >
         <div className="bg-zinc-800/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-          <div className="px-14 py-8">
+          <div className="px-10 py-8">
             <div className="w-full ">
               <img
                 src="/images/logo-gym.png"
@@ -255,6 +255,7 @@ const Login = () => {
                 </div>
               </div>
             </form>
+            <p className="text-xs mt-2 text-center text-gray-400 italic ">Demo logins: sword@example.com Password: 12345678</p>
           </div>
 
           <div className="bg-zinc-900/70 px-8 py-4 text-center">

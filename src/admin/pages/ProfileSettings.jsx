@@ -10,7 +10,9 @@ import {
   FiCheck,
   FiTrash2,
 } from "react-icons/fi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
+import userAPI from "../utils/userAPI";
 
 const ProfileSettings = () => {
   const { currentUser, logout } = useAuth();
@@ -19,7 +21,6 @@ const ProfileSettings = () => {
     name: "",
     email: "",
     phone: "",
-    bio: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -37,6 +38,11 @@ const ProfileSettings = () => {
   const [passwordError, setPasswordError] = useState(null);
   const [passwordSuccess, setPasswordSuccess] = useState(null);
 
+  // Add state for showing/hiding passwords
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   // Fetch user data on component mount
   useEffect(() => {
     if (currentUser) {
@@ -44,7 +50,6 @@ const ProfileSettings = () => {
         name: currentUser.name || "",
         email: currentUser.email || "",
         phone: currentUser.phone || "",
-        bio: currentUser.bio || "",
       });
 
       if (currentUser.profilePicture) {
@@ -166,30 +171,37 @@ const ProfileSettings = () => {
       setError(null);
       setSuccess(null);
 
-      // In a real app, you would upload the image and update the profile
-      // const formData = new FormData();
-      // formData.append('name', profileData.name);
-      // formData.append('email', profileData.email);
-      // formData.append('phone', profileData.phone);
-      // formData.append('bio', profileData.bio);
-      // if (profileImage) {
-      //   formData.append('profileImage', profileImage);
-      // }
-      // await api.put('/users/profile', formData);
+      // Prepare form data
+      const formData = new FormData();
+      formData.append("name", profileData.name);
+      formData.append("email", profileData.email);
+      formData.append("phone", profileData.phone);
+      if (profileImage) {
+        formData.append("profileImage", profileImage);
+      }
 
-      // Simulate API call
-      setTimeout(() => {
-        setIsLoading(false);
-        setSuccess("Profile updated successfully!");
+      // Update profile
+      const updatedUser = await userAPI.update(currentUser.id, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
-      }, 1000);
+      // Update local state
+      setProfileData({
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+      });
+      if (updatedUser.profilePicture) {
+        setProfileImagePreview(updatedUser.profilePicture);
+      }
+
+      setIsLoading(false);
+      setSuccess("Profile updated successfully!");
     } catch (err) {
       console.error("Error updating profile:", err);
-      setError("Failed to update profile. Please try again.");
+      setError(err.message || "Failed to update profile. Please try again.");
       setIsLoading(false);
     }
   };
@@ -207,33 +219,25 @@ const ProfileSettings = () => {
       setPasswordError(null);
       setPasswordSuccess(null);
 
-      // In a real app, you would update the password
-      // await api.put('/users/password', {
-      //   currentPassword: passwordData.currentPassword,
-      //   newPassword: passwordData.newPassword
-      // });
+      // Change password
+      await userAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
 
-      // Simulate API call
-      setTimeout(() => {
-        setIsLoading(false);
-        setPasswordSuccess("Password updated successfully!");
+      setIsLoading(false);
+      setPasswordSuccess("Password updated successfully!");
 
-        // Clear form
-        setPasswordData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setPasswordSuccess(null);
-        }, 3000);
-      }, 1000);
+      // Clear form
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (err) {
       console.error("Error updating password:", err);
       setPasswordError(
-        "Failed to update password. Please check your current password and try again."
+        err.message || "Failed to update password. Please try again."
       );
       setIsLoading(false);
     }
@@ -379,25 +383,7 @@ const ProfileSettings = () => {
                 />
               </div>
 
-              <div>
-                <label
-                  htmlFor="bio"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  rows="4"
-                  value={profileData.bio}
-                  onChange={handleProfileChange}
-                  className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-                  placeholder="Tell us a bit about yourself"
-                ></textarea>
-              </div>
-
-              <div className="pt-2">
+              <div className="pt-1">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -445,7 +431,7 @@ const ProfileSettings = () => {
               </div>
             )}
 
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <form onSubmit={handlePasswordSubmit} className="space-y-3">
               <div>
                 <label
                   htmlFor="currentPassword"
@@ -453,51 +439,94 @@ const ProfileSettings = () => {
                 >
                   Current Password
                 </label>
-                <input
-                  id="currentPassword"
-                  name="currentPassword"
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-                />
+                <div className="relative">
+                  <input
+                    id="currentPassword"
+                    name="currentPassword"
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showCurrentPassword ? (
+                      <FaEyeSlash className="text-gray-400 w-5 h-5" />
+                    ) : (
+                      <FaEye className="text-gray-400 w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="newPassword"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
-                  New Password
-                </label>
-                <input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="newPassword"
+                      name="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      {showNewPassword ? (
+                        <FaEyeSlash className="text-gray-400 w-5 h-5" />
+                      ) : (
+                        <FaEye className="text-gray-400 w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-300 mb-1"
+                  >
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      {showConfirmPassword ? (
+                        <FaEyeSlash className="text-gray-400 w-5 h-5" />
+                      ) : (
+                        <FaEye className="text-gray-400 w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
-                  Confirm New Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-zinc-700/50 border border-zinc-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-
-              <div className="pt-2">
+              <div className="pt-1">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

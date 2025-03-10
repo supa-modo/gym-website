@@ -173,10 +173,10 @@ const Sidebar = ({ isMobile, onClose }) => {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-1">
+      <nav className="flex-1 overflow-y-auto py-0.5">
         <ul className="space-y-1 px-3">
           {menuItems.map((category) => (
-            <div key={category.category} className="mb-6">
+            <div key={category.category} className="mb-5">
               <div
                 className="flex justify-between items-center text-gray-500 text-[0.65rem] font-sans uppercase mb-1 mt-6 px-4 cursor-pointer group"
                 onClick={() => toggleCategory(category.category)}
@@ -221,7 +221,7 @@ const Sidebar = ({ isMobile, onClose }) => {
 
       <div className="p-2 border-t border-zinc-700">
         <div className="bg-zinc-700/30 rounded-lg p-3">
-          <p className="text-[0.65rem] text-gray-400 mb-2">Logged in as</p>
+          {/* <p className="text-[0.65rem] text-gray-400 mb-2">Logged in as</p> */}
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-full bg-zinc-600 flex items-center justify-center">
               <span className="text-white text-xs font-bold">E.O</span>
