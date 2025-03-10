@@ -10,6 +10,7 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import planAPI from "../utils/planAPI";
+import { PiClockCountdownBold, PiClockCountdownDuotone } from "react-icons/pi";
 
 // Sample plan data
 const samplePlan = {
@@ -288,7 +289,7 @@ const PlanForm = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiClock className="text-gray-500" />
+                        <PiClockCountdownBold size={18} className="text-gray-500" />
                       </div>
                       <select
                         id="duration"
@@ -410,7 +411,7 @@ const PlanForm = () => {
                 </div>
 
                 <div className="flex items-center text-sm text-gray-400 mt-4">
-                  <FiClock className="mr-2" />
+                  <PiClockCountdownDuotone size={19} className="mr-2" />
                   <span>
                     Duration: {formData.duration} month
                     {parseInt(formData.duration) > 1 ? "s" : ""}

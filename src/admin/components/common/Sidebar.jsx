@@ -17,6 +17,7 @@ import useAuth from "../../hooks/useAuth";
 import { HiCreditCard } from "react-icons/hi";
 import { IoBagAdd } from "react-icons/io5";
 import { BiSolidCategory } from "react-icons/bi";
+import { TbOctahedron, TbOctahedronPlus } from "react-icons/tb";
 
 const menuItems = [
   {
@@ -64,12 +65,12 @@ const menuItems = [
     items: [
       {
         title: "All Plans",
-        icon: <FiCreditCard className="w-5 h-5" />,
+        icon: <TbOctahedron className="w-5 h-5" />,
         path: "/admin/plans",
       },
       {
         title: "Add New Plan",
-        icon: <FiCreditCard className="w-5 h-5" />,
+        icon: <TbOctahedronPlus className="w-5 h-5" />,
         path: "/admin/plans/new",
       },
     ],

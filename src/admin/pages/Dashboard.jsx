@@ -12,6 +12,10 @@ import {
   FiClock,
 } from "react-icons/fi";
 import formatDate from "../utils/dateFormatter";
+import { TbActivity, TbCalendarCheck, TbCreditCardOff, TbShoppingBagCheck } from "react-icons/tb";
+import { PiMoneyWavyDuotone, PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
+import { HiCreditCard } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 // Sample data for charts and stats
 const sampleStats = {
@@ -106,6 +110,7 @@ const Dashboard = () => {
   const [recentUsers, setRecentUsers] = useState(sampleRecentUsers);
   const [recentOrders, setRecentOrders] = useState(sampleRecentOrders);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -146,7 +151,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-white">Elite Fitness Admin Dashboard</h1>
         <div className="flex items-center space-x-2">
-          <FiCalendar className="text-gray-400" />
+          <TbCalendarCheck className="w-5 h-5 text-gray-400" />
           <span className="text-sm text-gray-400">
             {new Date().toLocaleDateString("en-US", {
               month: "long",
@@ -173,8 +178,8 @@ const Dashboard = () => {
                 {stats.totalUsers.toLocaleString()}
               </h3>
             </div>
-            <div className="bg-blue-500/10 p-3 rounded-lg">
-              <FiUsers className="text-blue-500 w-6 h-6" />
+            <div className="bg-blue-500/10 p-2 rounded-lg">
+              <PiUsersThreeDuotone className="text-blue-500 w-8 h-8" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
@@ -210,8 +215,8 @@ const Dashboard = () => {
                 {formatCurrency(stats.totalRevenue)}
               </h3>
             </div>
-            <div className="bg-green-500/10 p-3 rounded-lg">
-              <FiDollarSign className="text-green-500 w-6 h-6" />
+            <div className="bg-green-500/10 p-2 rounded-lg">
+              <PiMoneyWavyDuotone className="text-green-500 w-8 h-8" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
@@ -247,8 +252,8 @@ const Dashboard = () => {
                 {stats.activeSubscriptions.toLocaleString()}
               </h3>
             </div>
-            <div className="bg-purple-500/10 p-3 rounded-lg">
-              <FiCreditCard className="text-purple-500 w-6 h-6" />
+            <div className="bg-purple-500/10 p-2 rounded-lg">
+              <HiCreditCard className="text-purple-500 w-8 h-8" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
@@ -286,8 +291,8 @@ const Dashboard = () => {
                 {stats.totalOrders.toLocaleString()}
               </h3>
             </div>
-            <div className="bg-orange-500/10 p-3 rounded-lg">
-              <FiShoppingBag className="text-orange-500 w-6 h-6" />
+            <div className="bg-orange-500/10 p-2 rounded-lg">
+              <TbShoppingBagCheck className="text-orange-500 w-8 h-8" />
             </div>
           </div>
           <div className="mt-4 flex items-center">
@@ -336,7 +341,7 @@ const Dashboard = () => {
 
           <div className="h-64 flex items-center justify-center">
             <div className="text-center">
-              <FiActivity className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <TbActivity className="w-12 h-12 text-gray-500 mx-auto mb-4" />
               <p className="text-gray-400">
                 Revenue chart will be displayed here
               </p>
@@ -359,7 +364,7 @@ const Dashboard = () => {
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
               <div className="bg-blue-500/10 p-2 rounded-lg">
-                <FiUsers className="text-blue-500 w-5 h-5" />
+                <PiUsersDuotone size={23} className="text-blue-500 " />
               </div>
               <div>
                 <p className="text-white text-sm font-medium">
@@ -376,7 +381,7 @@ const Dashboard = () => {
 
             <div className="flex items-start space-x-3">
               <div className="bg-green-500/10 p-2 rounded-lg">
-                <FiDollarSign className="text-green-500 w-5 h-5" />
+                <HiCreditCard className="text-green-500 w-6 h-6" />
               </div>
               <div>
                 <p className="text-white text-sm font-medium">
@@ -393,7 +398,7 @@ const Dashboard = () => {
 
             <div className="flex items-start space-x-3">
               <div className="bg-orange-500/10 p-2 rounded-lg">
-                <FiShoppingBag className="text-orange-500 w-5 h-5" />
+                <TbShoppingBagCheck className="text-orange-500 w-6 h-6" />
               </div>
               <div>
                 <p className="text-white text-sm font-medium">
@@ -410,14 +415,14 @@ const Dashboard = () => {
 
             <div className="flex items-start space-x-3">
               <div className="bg-red-500/10 p-2 rounded-lg">
-                <FiCreditCard className="text-red-500 w-5 h-5" />
+                <TbCreditCardOff className="text-red-500 w-6 h-6" />
               </div>
               <div>
                 <p className="text-white text-sm font-medium">
-                  Subscription canceled
+                  Subscription cancelled
                 </p>
                 <p className="text-gray-400 text-xs">
-                  David Brown canceled his subscription
+                  David Brown cancelled his subscription
                 </p>
                 <p className="text-gray-500 text-xs mt-1 flex items-center">
                   <FiClock className="w-3 h-3 mr-1" /> 8 hours ago
@@ -476,7 +481,7 @@ const Dashboard = () => {
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-3 py-1 text-xs rounded-lg ${
                           user.role === "member"
                             ? "bg-blue-500/10 text-blue-500"
                             : "bg-purple-500/10 text-purple-500"
@@ -495,7 +500,7 @@ const Dashboard = () => {
           </div>
 
           <div className="p-3 border-t border-zinc-700 text-center">
-            <button className="text-sm text-primary hover:text-red-400 transition-colors">
+            <button className="text-sm font-medium text-primary hover:text-red-400 transition-colors" onClick={() => navigate(`/admin/users`)}>
               View All Users
             </button>
           </div>
@@ -553,7 +558,7 @@ const Dashboard = () => {
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-3 py-1 text-xs rounded-lg ${
                           order.status === "completed"
                             ? "bg-green-500/10 text-green-500"
                             : order.status === "processing"
@@ -574,7 +579,7 @@ const Dashboard = () => {
           </div>
 
           <div className="p-3 border-t border-zinc-700 text-center">
-            <button className="text-sm text-primary hover:text-red-400 transition-colors">
+            <button className="text-sm font-medium text-primary/80 hover:text-red-400 transition-colors">
               View All Orders
             </button>
           </div>

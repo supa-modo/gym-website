@@ -12,6 +12,7 @@ import {
   FiSave,
 } from "react-icons/fi";
 import categoryAPI from "../utils/categoryAPI";
+import { TbEdit, TbTrash } from "react-icons/tb";
 
 // Sample categories data
 const sampleCategories = [
@@ -381,7 +382,7 @@ const ProductCategories = () => {
                           className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                           title="Edit Category"
                         >
-                          <FiEdit2 className="w-4 h-4" />
+                          <TbEdit className="w-4 h-4" />
                           <span>Edit</span>
                         </button>
                         <button
@@ -394,7 +395,7 @@ const ProductCategories = () => {
                           title="Delete Category"
                           disabled={category.productCount > 0}
                         >
-                          <FiTrash2 className="w-4 h-4" />
+                          <TbTrash className="w-4 h-4" />
                           <span>Delete</span>
                         </button>
                       </div>

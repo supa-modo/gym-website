@@ -11,6 +11,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useAuth } from "../../hooks/useAuth";
+import { PiUserDuotone } from "react-icons/pi";
 
 const Header = ({ title, onMenuClick }) => {
   const { currentUser, logout } = useAuth();
@@ -41,8 +42,8 @@ const Header = ({ title, onMenuClick }) => {
     },
     {
       id: 3,
-      title: "Subscription canceled",
-      message: "Jane Smith canceled her subscription",
+      title: "Subscription cancelled",
+      message: "Jane Smith cancelled her subscription",
       time: "3 hours ago",
       read: true,
     },
@@ -194,7 +195,7 @@ const Header = ({ title, onMenuClick }) => {
               className="flex items-center space-x-2 text-gray-400 hover:text-white"
             >
               <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center">
-                <FiUser className="w-4 h-4" />
+                <PiUserDuotone className="w-4 h-4" />
               </div>
               <span className="hidden md:block text-sm font-medium text-white">
                 {currentUser?.name || "Admin User"}

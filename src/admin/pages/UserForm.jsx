@@ -14,6 +14,12 @@ import {
   FiTrash2,
 } from "react-icons/fi";
 import { userAPI } from "../utils/api";
+import {
+  PiPasswordDuotone,
+  PiPhoneListDuotone,
+  PiUserDuotone,
+} from "react-icons/pi";
+import { TbTrash } from "react-icons/tb";
 
 // Sample user data
 const sampleUser = {
@@ -289,7 +295,7 @@ const UserForm = () => {
 
                 <div className="space-y-4">
                   {/* Image Preview */}
-                  <div className="w-40 h-40 mx-auto bg-zinc-700 rounded-full overflow-hidden flex items-center justify-center">
+                  <div className="w-44 h-44 mx-auto bg-zinc-700 rounded-full overflow-hidden flex items-center justify-center">
                     {profileImagePreview ? (
                       <img
                         src={profileImagePreview}
@@ -297,7 +303,7 @@ const UserForm = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <FiUser className="w-20 h-20 text-gray-500" />
+                      <PiUserDuotone className="w-20 h-20 text-gray-500" />
                     )}
                   </div>
 
@@ -323,7 +329,7 @@ const UserForm = () => {
                         onClick={handleRemoveImage}
                         className="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
                       >
-                        <FiTrash2 className="w-4 h-4 mr-2" />
+                        <TbTrash className="w-4 h-4 mr-2" />
                         Remove Image
                       </button>
                     )}
@@ -361,7 +367,7 @@ const UserForm = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiUser className="text-gray-500" />
+                        <PiUserDuotone size={18} className=" text-gray-500" />
                       </div>
                       <input
                         id="name"
@@ -421,7 +427,10 @@ const UserForm = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiPhone className="text-gray-500" />
+                        <PiPhoneListDuotone
+                          size={18}
+                          className=" text-gray-500"
+                        />
                       </div>
                       <input
                         id="phone"
@@ -490,7 +499,10 @@ const UserForm = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiLock className="text-gray-500" />
+                        <PiPasswordDuotone
+                          size={19}
+                          className="text-zinc-400"
+                        />
                       </div>
                       <input
                         id="password"
@@ -526,7 +538,10 @@ const UserForm = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FiLock className="text-gray-500" />
+                        <PiPasswordDuotone
+                          size={19}
+                          className="text-zinc-400"
+                        />
                       </div>
                       <input
                         id="confirmPassword"

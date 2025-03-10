@@ -4,15 +4,10 @@ import { motion } from "framer-motion";
 import {
   FiPlus,
   FiSearch,
-  FiEdit2,
-  FiTrash2,
-  FiEye,
   FiFilter,
   FiX,
   FiChevronLeft,
   FiChevronRight,
-  FiAlertCircle,
-  FiDollarSign,
   FiPackage,
 } from "react-icons/fi";
 import productAPI from "../utils/productAPI";
@@ -50,12 +45,15 @@ const Products = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await productAPI.getAll({
+        // Add category to the API params
+        const params = {
           category: selectedCategory !== "all" ? selectedCategory : undefined,
           search: searchQuery || undefined,
-        });
+        };
 
-        console.log("Fetched products:", response); // Debug the fetched products
+        const response = await productAPI.getAll(params);
+
+        console.log("Fetched products:", response);
         setProducts(response);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -97,12 +95,17 @@ const Products = () => {
     }
   };
 
-  // Update the currentProducts calculation to use pagination
-  const totalProducts = products.length;
+  // Update the currentProducts calculation to filter by category if needed
+  const filteredProducts = products.filter((product) => {
+    if (selectedCategory === "all") return true;
+    return product.category === selectedCategory;
+  });
+
+  const totalProducts = filteredProducts.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentProducts = products
+  const currentProducts = filteredProducts
     .map((product) => ({
       ...product,
       category: product.category?.value || product.category,
@@ -137,9 +140,9 @@ const Products = () => {
         <h1 className="text-2xl font-bold text-white">
           Elite Store Product Management
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Link to="/admin/products/categories">
-            <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors">
               Manage Categories
             </button>
           </Link>
@@ -147,7 +150,7 @@ const Products = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm font-medium transition-colors shadow-lg shadow-primary/20"
+              className="bg-primary hover:bg-red-700 text-white px-5 py-2 rounded-lg flex items-center space-x-2 text-sm font-semibold transition-colors shadow-lg shadow-primary/20"
             >
               <FiPlus className="w-4 h-4" />
               <span>Add New Product</span>
@@ -187,7 +190,7 @@ const Products = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white focus:outline-none focus:border-primary transition-colors"
+              className="appearance-none bg-zinc-700/50 border border-zinc-600 rounded-lg pl-10 pr-8 py-2 text-white font-nunito font-semibold focus:outline-none focus:border-primary transition-colors"
             >
               {categories.map((category) => (
                 <option key={category.value} value={category.value}>
@@ -294,7 +297,7 @@ const Products = () => {
                       navigate(`/admin/products/${product.id}`);
                     }}
                     className="px-4 py-1 rounded-md text-yellow-500 hover:text-yellow-400 bg-yellow-400/20 transition-colors flex items-center space-x-1 text-xs"
-                    title="Edit Product"
+                    title="Edit Product" 
                   >
                     <TbShoppingBagEdit className="w-4 h-4" />
                     <span>Edit</span>
@@ -420,11 +423,11 @@ const Products = () => {
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/80 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-md w-full"
+            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-lg w-full"
           >
             <h3 className="text-xl font-bold text-white mb-4">
               Confirm Deletion
@@ -442,13 +445,13 @@ const Products = () => {
                   setIsDeleteModalOpen(false);
                   setProductToDelete(null);
                 }}
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                className="px-6 py-2 bg-zinc-700 text-white font-semibold rounded-lg hover:bg-zinc-600 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteProduct}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>

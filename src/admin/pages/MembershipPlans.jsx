@@ -12,6 +12,8 @@ import {
 } from "react-icons/fi";
 import planAPI from "../utils/planAPI";
 import formatDate from "../utils/dateFormatter";
+import { PiClockCountdownDuotone, PiMoneyWavyDuotone, PiUsersDuotone } from "react-icons/pi";
+import { TbEdit } from "react-icons/tb";
 
 const MembershipPlans = () => {
   const navigate = useNavigate();
@@ -149,21 +151,21 @@ const MembershipPlans = () => {
 
                 <div className="space-y-3">
                   <div className="flex items-center text-sm">
-                    <FiClock className="text-gray-400 mr-2" />
+                    <PiClockCountdownDuotone className="w-5 h-5 text-gray-400 mr-2" />
                     <span className="text-gray-300">
                       Duration: {formatDuration(plan.duration)}
                     </span>
                   </div>
 
                   <div className="flex items-center text-sm">
-                    <FiUsers className="text-gray-400 mr-2" />
+                    <PiUsersDuotone className="w-5 h-5 text-gray-400 mr-2" />
                     <span className="text-gray-300">
                       Active Subscribers: {plan.activeSubscriptions}
                     </span>
                   </div>
 
                   <div className="flex items-center text-sm">
-                    <FiDollarSign className="text-gray-400 mr-2" />
+                    <PiMoneyWavyDuotone className="w-5 h-5 text-gray-400 mr-2" />
                     <span className="text-gray-300">
                       Monthly Revenue:{" "}
                       {formatCurrency(plan.price * plan.activeSubscriptions)}
@@ -183,7 +185,7 @@ const MembershipPlans = () => {
                     className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                     title="Edit Plan"
                   >
-                    <FiEdit2 className="w-4 h-4" />
+                    <TbEdit className="w-4 h-4" />
                     <span className="text-sm">Edit</span>
                   </button>
                   <button
@@ -230,11 +232,11 @@ const MembershipPlans = () => {
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-md w-full"
+            className="bg-zinc-800 rounded-xl border border-zinc-700 p-6 max-w-lg w-full"
           >
             <h3 className="text-xl font-bold text-white mb-4">
               Confirm Deletion
@@ -252,13 +254,13 @@ const MembershipPlans = () => {
                   setIsDeleteModalOpen(false);
                   setPlanToDelete(null);
                 }}
-                className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                className="px-6 py-2 bg-zinc-700 text-white font-semibold rounded-lg hover:bg-zinc-600 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeletePlan}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>

@@ -15,6 +15,7 @@ import {
 } from "react-icons/fi";
 import { userAPI } from "../utils/api";
 import formatDate from "../utils/dateFormatter";
+import { TbEdit, TbTrash } from "react-icons/tb";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -325,7 +326,7 @@ const Users = () => {
                           className="text-yellow-500 hover:text-yellow-400 transition-colors flex items-center space-x-1"
                           title="Edit User"
                         >
-                          <FiEdit2 className="w-4 h-4" />
+                          <TbEdit className="w-4 h-4" />
                           <span>Edit</span>
                         </button>
                         <button
@@ -336,7 +337,7 @@ const Users = () => {
                           className="text-red-500 hover:text-red-400 transition-colors flex items-center space-x-1"
                           title="Delete User"
                         >
-                          <FiTrash2 className="w-4 h-4" />
+                          <TbTrash className="w-4 h-4" />
                           <span>Delete</span>
                         </button>
                       </div>
@@ -430,7 +431,7 @@ const Users = () => {
       </div>
 
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-zinc-900/80 flex items-center justify-center">
+        <div className="fixed inset-0 bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-zinc-800 rounded-xl border border-zinc-700 p-6">
             <h2 className="text-lg font-semibold text-white">Confirm Delete</h2>
             <p className="text-gray-400 mt-2">
@@ -443,13 +444,13 @@ const Users = () => {
             <div className="flex justify-end space-x-4 mt-4">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="px-4 py-2 bg-zinc-700 text-white rounded-md"
+                className="px-6 py-2 bg-zinc-700 text-white font-semibold rounded-md"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
-                className="px-4 py-2 bg-red-600 text-white rounded-md"
+                className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md"
               >
                 Delete
               </button>

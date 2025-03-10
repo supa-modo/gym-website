@@ -10,7 +10,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import productAPI from "../utils/productAPI";
-import { TbTrash } from "react-icons/tb";
+import { TbCloudUpload, TbTrash } from "react-icons/tb";
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -332,7 +332,14 @@ const ProductForm = () => {
                       htmlFor="image-upload"
                       className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center cursor-pointer"
                     >
-                      {imagePreview ? "Change Image" : "Upload Image"}
+                      <div className="flex items-center space-x-2 justify-center">
+                      <TbCloudUpload className="w-5 h-5"/>
+                      <span>
+                      {imagePreview ? "Change Image" : "Upload Image"}  
+                      </span>
+                      
+                      </div>
+                      
                     </label>
                     <input
                       id="image-upload"

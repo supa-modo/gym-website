@@ -15,6 +15,10 @@ import {
 } from "react-icons/fi";
 import subscriptionAPI from "../utils//subscriptionAPI";
 import formatDate from "../utils/dateFormatter";
+import { MdPayment, MdPayments } from "react-icons/md";
+import { PiClockCountdownDuotone, PiClockUserDuotone, PiPhoneListDuotone, PiStripeLogoDuotone, PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
+import { BsStripe } from "react-icons/bs";
+import { TbCalendar, TbCalendarCancel, TbCalendarDot, TbCalendarDue, TbCalendarPlus, TbCalendarTime, TbClock, TbRefresh } from "react-icons/tb";
 
 // Status options
 const statusOptions = [
@@ -91,7 +95,7 @@ const SubscriptionDetails = () => {
       setSuccess(null);
       await subscriptionAPI.cancel(subscription.id);
       setSubscription((prev) => ({ ...prev, status: "cancelled" }));
-      setSuccess("Subscription canceled successfully!");
+      setSuccess("Subscription cancelled successfully!");
     } catch (err) {
       console.error("Error canceling subscription:", err);
       setError("Failed to cancel subscription. Please try again.");
@@ -108,7 +112,7 @@ const SubscriptionDetails = () => {
       setError(null);
       setSuccess(null);
 
-      // Use renew API for expired/canceled subscriptions
+      // Use renew API for expired/cancelled subscriptions
       if (
         subscription.status === "expired" ||
         subscription.status === "cancelled"
@@ -271,7 +275,7 @@ const SubscriptionDetails = () => {
                   {subscription.status === "active" && (
                     <div className="bg-zinc-700/30 p-3 rounded-lg flex justify-between items-center mt-4">
                       <div className="flex items-center text-sm">
-                        <FiClock className="text-gray-400 mr-2" />
+                        <PiClockCountdownDuotone size={19} className="text-gray-400 mr-2" />
                         <span className="text-gray-400">Time remaining:</span>
                       </div>
                       <span className="text-white font-medium">
@@ -302,7 +306,7 @@ const SubscriptionDetails = () => {
                     </p>
 
                     <div className="flex items-center text-sm text-gray-400">
-                      <FiCalendar className="mr-2" />
+                      <TbCalendarTime size={19} className="mr-2" />
                       <span>
                         Duration: {subscription.plan.duration} month
                         {subscription.plan.duration > 1 ? "s" : ""}
@@ -320,7 +324,7 @@ const SubscriptionDetails = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center text-sm">
                       <div className="flex items-center">
-                        <FiCalendar className="text-gray-400 mr-2" />
+                        <TbCalendarDot size={19} className="text-gray-400 mr-3" />
                         <span className="text-gray-400">Start Date:</span>
                       </div>
                       <span className="text-white">
@@ -330,7 +334,7 @@ const SubscriptionDetails = () => {
 
                     <div className="flex justify-between items-center text-sm">
                       <div className="flex items-center">
-                        <FiCalendar className="text-gray-400 mr-2" />
+                        <TbCalendarCancel size={19} className="text-gray-400 mr-3" />
                         <span className="text-gray-400">End Date:</span>
                       </div>
                       <span className="text-white">
@@ -341,7 +345,7 @@ const SubscriptionDetails = () => {
                     {subscription.status === "active" && (
                       <div className="flex justify-between items-center text-sm">
                         <div className="flex items-center">
-                          <FiRefreshCw className="text-gray-400 mr-2" />
+                          <TbRefresh size={18} className="text-gray-400 mr-3" />
                           <span className="text-gray-400">Next Renewal:</span>
                         </div>
                         <span className="text-white">
@@ -352,7 +356,7 @@ const SubscriptionDetails = () => {
 
                     <div className="flex justify-between items-center text-sm">
                       <div className="flex items-center">
-                        <FiClock className="text-gray-400 mr-2" />
+                        <PiClockUserDuotone size={19} className="text-gray-400 mr-3" />
                         <span className="text-gray-400">Last Updated:</span>
                       </div>
                       <span className="text-white">
@@ -456,7 +460,7 @@ const SubscriptionDetails = () => {
                   </div>
 
                   <div className="flex items-center text-sm">
-                    <FiUser className="text-gray-400 mr-2" />
+                    <PiUserDuotone size={18} className="text-gray-400 mr-2" />
                     <span className="text-gray-400">Customer ID:</span>
                     <span className="text-white ml-2">
                       {subscription.user.id}
@@ -464,7 +468,7 @@ const SubscriptionDetails = () => {
                   </div>
 
                   <div className="flex items-center text-sm">
-                    <FiUser className="text-gray-400 mr-2" />
+                    <PiPhoneListDuotone size={18} className="text-gray-400 mr-2" />
                     <span className="text-gray-400">Phone:</span>
                     <span className="text-white ml-2">
                       {subscription.user.phone}
@@ -489,7 +493,7 @@ const SubscriptionDetails = () => {
 
                 <div className="space-y-3">
                   <div className="flex items-center text-sm">
-                    <FiCreditCard className="text-gray-400 mr-2" />
+                    <MdPayments size={18} className="text-gray-400 mr-2" />
                     <span className="text-gray-400">Payment Method:</span>
                     <span className="text-white ml-2">
                       {subscription.paymentMethod}
@@ -497,7 +501,15 @@ const SubscriptionDetails = () => {
                   </div>
 
                   <div className="flex items-center text-sm">
-                    <FiCreditCard className="text-gray-400 mr-2" />
+                    <MdPayments size={18} className="text-gray-400 mr-2" />
+                    <span className="text-gray-400">Payment Transaction ID:</span>
+                    <span className="text-white ml-2">
+                      {subscription.paymentMethod}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center text-sm">
+                    <BsStripe size={16} className="text-gray-400 mr-2" />
                     <span className="text-gray-400">
                       Stripe Subscription ID:
                     </span>
@@ -521,7 +533,7 @@ const SubscriptionDetails = () => {
                         onClick={() => setShowExtendModal(true)}
                         className="w-full bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2.5 font-semibold rounded-lg text-sm transition-colors flex items-center justify-center"
                       >
-                        <FiCalendar className="w-4 h-4 mr-2" />
+                        <TbCalendarPlus className="w-5 h-5 mr-3" />
                         Extend Subscription
                       </button>
 
@@ -529,7 +541,7 @@ const SubscriptionDetails = () => {
                         onClick={() => setShowCancelModal(true)}
                         className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2.5 font-semibold rounded-lg text-sm transition-colors flex items-center justify-center"
                       >
-                        <FiX className="w-4 h-4 mr-2" />
+                        <FiX className="w-5 h-5 mr-3" />
                         Cancel Subscription
                       </button>
                     </>

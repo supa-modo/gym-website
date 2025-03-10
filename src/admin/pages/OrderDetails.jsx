@@ -92,8 +92,8 @@ const statusOptions = [
     icon: <FiCheck className="w-4 h-4" />,
   },
   {
-    value: "canceled",
-    label: "Canceled",
+    value: "cancelled",
+    label: "Cancelled",
     color: "bg-red-500/10 text-red-500",
     icon: <FiAlertCircle className="w-4 h-4" />,
   },
@@ -262,18 +262,18 @@ const OrderDetails = () => {
           <h1 className="text-2xl font-bold text-white">Order #{id}</h1>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex space-x-3">
           <button
             onClick={handlePrintOrder}
-            className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg text-sm flex items-center transition-colors"
+            className="bg-zinc-700 hover:bg-zinc-600 text-white px-5 py-2 rounded-lg text-sm flex items-center transition-colors"
           >
             <FiPrinter className="w-4 h-4 mr-2" />
-            Print
+            Print Order
           </button>
 
           <button
             onClick={handleSendEmail}
-            className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg text-sm flex items-center transition-colors"
+            className="bg-zinc-700 hover:bg-zinc-600 text-white px-5 py-2 rounded-lg text-sm flex items-center transition-colors"
           >
             <FiMail className="w-4 h-4 mr-2" />
             Email Customer
@@ -456,7 +456,7 @@ const OrderDetails = () => {
 
                   <div className="pt-2">
                     <Link to={`/admin/users/${order.user.id}`}>
-                      <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg text-sm transition-colors w-full">
+                      <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg text-sm transition-colors w-full">
                         View Customer Profile
                       </button>
                     </Link>

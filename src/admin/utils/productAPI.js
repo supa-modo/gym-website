@@ -4,12 +4,7 @@ const productAPI = {
   // Get all products
   getAll: async (params) => {
     try {
-      const response = await api.get(`/products`, {
-        params: {
-          search: params.search,
-          category: params.category,
-        },
-      });
+      const response = await api.get("/products", { params });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

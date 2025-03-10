@@ -230,7 +230,7 @@ const AddSubscription = () => {
                 <option value="active">Active</option>
                 <option value="pending">Pending</option>
                 <option value="expired">Expired</option>
-                <option value="canceled">Canceled</option>
+                <option value="cancelled">Cancelled</option>
               </select>
             </div>
           </div>

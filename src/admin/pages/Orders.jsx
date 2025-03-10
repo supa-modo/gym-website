@@ -16,6 +16,9 @@ import {
   FiClock,
 } from "react-icons/fi";
 import { orderAPI } from "../utils/api";
+import { PiMoneyWavyDuotone, PiPackageDuotone } from "react-icons/pi";
+import { TbCalendarCode, TbFilter } from "react-icons/tb";
+import { MdPayments } from "react-icons/md";
 
 // Sample order data
 const sampleOrders = [
@@ -110,7 +113,7 @@ const Orders = () => {
     { value: "shipped", label: "Shipped" },
     { value: "delivered", label: "Delivered" },
     { value: "completed", label: "Completed" },
-    { value: "canceled", label: "Canceled" },
+    { value: "cancelled", label: "Cancelled" },
   ];
 
   // Date range options
@@ -231,7 +234,7 @@ const Orders = () => {
         return "bg-teal-500/10 text-teal-500";
       case "pending":
         return "bg-yellow-500/10 text-yellow-500";
-      case "canceled":
+      case "cancelled":
         return "bg-red-500/10 text-red-500";
       default:
         return "bg-gray-500/10 text-gray-500";
@@ -251,7 +254,7 @@ const Orders = () => {
         return <FiPackage className="w-4 h-4" />;
       case "pending":
         return <FiClock className="w-4 h-4" />;
-      case "canceled":
+      case "cancelled":
         return <FiX className="w-4 h-4" />;
       default:
         return <FiPackage className="w-4 h-4" />;
@@ -277,7 +280,7 @@ const Orders = () => {
               </h3>
             </div>
             <div className="bg-blue-500/10 p-3 rounded-lg">
-              <FiPackage className="text-blue-500 w-5 h-5" />
+              <PiPackageDuotone className="text-blue-500 w-6 h-6" />
             </div>
           </div>
         </div>
@@ -297,7 +300,7 @@ const Orders = () => {
               </h3>
             </div>
             <div className="bg-green-500/10 p-3 rounded-lg">
-              <FiDollarSign className="text-green-500 w-5 h-5" />
+              <PiMoneyWavyDuotone className="text-green-500 w-6 h-6" />
             </div>
           </div>
         </div>
@@ -333,7 +336,7 @@ const Orders = () => {
               </h3>
             </div>
             <div className="bg-teal-500/10 p-3 rounded-lg">
-              <FiPackage className="text-teal-500 w-5 h-5" />
+              <PiPackageDuotone className="text-teal-500 w-6 h-6" />
             </div>
           </div>
         </div>
@@ -355,7 +358,7 @@ const Orders = () => {
                 </option>
               ))}
             </select>
-            <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <TbFilter className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
               <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
             </div>
@@ -374,7 +377,7 @@ const Orders = () => {
                 </option>
               ))}
             </select>
-            <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <TbCalendarCode  className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
               <FiChevronRight className="w-4 h-4 text-gray-400 transform rotate-90" />
             </div>
@@ -420,7 +423,7 @@ const Orders = () => {
                 {/* Order Header */}
                 <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
                   <div>
-                    <h3 className="text-lg font-medium text-white mb-1">
+                    <h3 className="text-lg font-medium text-primary mb-1">
                       Order #{order.id}
                     </h3>
                     <p className="text-gray-400 text-sm">
@@ -451,8 +454,11 @@ const Orders = () => {
 
                 {/* Customer Info */}
                 <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-white font-medium mr-3">
-                    {order.user.name.charAt(0)}
+                  <div className="w-9 h-9 rounded-full text-sm px-5 bg-zinc-700 flex items-center justify-center text-white font-medium mr-3">
+                    {order.user.name.split(" ")
+                            .slice(0, 2)
+                            .map((name) => name.charAt(0))
+                            .join("")}
                   </div>
                   <div>
                     <h4 className="text-white font-medium">
@@ -470,7 +476,7 @@ const Orders = () => {
                       className="flex justify-between items-center text-sm"
                     >
                       <div className="flex items-center">
-                        <FiPackage className="text-gray-400 mr-2" />
+                        <PiPackageDuotone className="w-4 h-4 text-gray-400 mr-2" />
                         <span className="text-white">{item.name}</span>
                         <span className="text-gray-400 mx-2">×</span>
                         <span className="text-gray-400">{item.quantity}</span>
@@ -486,7 +492,7 @@ const Orders = () => {
                 <div className="flex flex-wrap justify-between items-center gap-4 pt-4 border-t border-zinc-700">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center text-sm">
-                      <FiUser className="text-gray-400 mr-2" />
+                      <MdPayments className="w-5 h-5 text-gray-400 mr-2" />
                       <span className="text-gray-400">
                         Payment: {order.paymentMethod}
                       </span>
