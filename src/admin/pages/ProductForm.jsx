@@ -7,6 +7,25 @@ import { ProductImageUpload } from "./components/ProductImageUpload";
 import { ProductDetailsForm } from "./components/ProductDetailsForm";
 import { ProductVariants } from "./components/ProductVariants";
 
+// Custom styles for scrollbar
+const scrollbarStyles = {
+  scrollbarWidth: "thin",
+  scrollbarColor: "#52525b #27272a",
+};
+
+const scrollbarStylesWebkit = {
+  "&::-webkit-scrollbar": {
+    width: "8px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#27272a",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#52525b",
+    borderRadius: "4px",
+  },
+};
+
 const ProductForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -502,7 +521,10 @@ const ProductForm = () => {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 min-h-[calc(100vh-150px)]"
+        >
           {/* Error Message */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3">
@@ -521,7 +543,7 @@ const ProductForm = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Image Upload */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 lg:sticky lg:top-4 lg:self-start">
               <ProductImageUpload
                 imagePreview={imagePreview}
                 handleImageChange={handleImageChange}
@@ -531,7 +553,13 @@ const ProductForm = () => {
             </div>
 
             {/* Right Column - Product Details */}
-            <div className="lg:col-span-2">
+            <div
+              className="lg:col-span-2 lg:max-h-[calc(100vh-150px)] lg:overflow-y-auto lg:pr-2"
+              style={{
+                ...scrollbarStyles,
+                ...scrollbarStylesWebkit,
+              }}
+            >
               <ProductDetailsForm
                 formData={formData}
                 handleChange={handleChange}
@@ -560,7 +588,7 @@ const ProductForm = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end space-x-3 lg:sticky lg:bottom-0 lg:bg-zinc-900 lg:py-4 lg:z-10">
             <Link to="/admin/products">
               <button
                 type="button"

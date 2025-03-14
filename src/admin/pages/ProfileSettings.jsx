@@ -172,20 +172,23 @@ const ProfileSettings = () => {
       setSuccess(null);
 
       // Prepare form data
-      const formData = new FormData();
-      formData.append("name", profileData.name);
-      formData.append("email", profileData.email);
-      formData.append("phone", profileData.phone);
+      const updateData = {
+        name: profileData.name,
+        email: profileData.email,
+        phone: profileData.phone,
+      };
+
+      // If there's a new image, upload it first
       if (profileImage) {
-        formData.append("profileImage", profileImage);
+        const uploadResponse = await userAPI.uploadProfilePicture(
+          currentUser.id,
+          profileImage
+        );
+        updateData.profilePicture = uploadResponse.imageUrl;
       }
 
       // Update profile
-      const updatedUser = await userAPI.update(currentUser.id, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const updatedUser = await userAPI.update(currentUser.id, updateData);
 
       // Update local state
       setProfileData({

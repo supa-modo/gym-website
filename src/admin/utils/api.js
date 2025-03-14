@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // API base URL
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 // Create axios instance
 const api = axios.create({
@@ -56,8 +56,6 @@ export const userAPI = {
   delete: (id) => api.delete(`/users/${id}`),
   getSubscriptions: (userId) => api.get(`/users/${userId}/subscriptions`),
 };
-
-
 
 // Orders API
 export const orderAPI = {

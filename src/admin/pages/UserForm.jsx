@@ -211,7 +211,7 @@ const UserForm = () => {
 
       setTimeout(() => {
         navigate("/admin/users");
-      }, 1500);
+      }, 1000);
     } catch (err) {
       console.error("Error saving user:", err);
       setError(

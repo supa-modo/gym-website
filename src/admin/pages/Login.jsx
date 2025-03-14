@@ -255,7 +255,9 @@ const Login = () => {
                 </div>
               </div>
             </form>
-            <p className="text-xs mt-2 text-center text-gray-400 italic ">Demo logins: sword@example.com Password: 12345678</p>
+            <p className="text-xs mt-2 text-center text-gray-400 italic ">
+              Demo logins: admin2@elitefitness.com Password: admin123
+            </p>
           </div>
 
           <div className="bg-zinc-900/70 px-8 py-4 text-center">

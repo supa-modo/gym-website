@@ -43,9 +43,9 @@ const userAPI = {
   },
 
   // Update a user
-  update: async (id, data, config) => {
+  update: async (id, userData) => {
     try {
-      const response = await api.put(`/users/${id}`, data, config);
+      const response = await api.put(`/users/${id}`, userData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -65,7 +65,7 @@ const userAPI = {
   // Change password
   changePassword: async (passwordData) => {
     try {
-      const response = await api.put(`/users/password`, passwordData);
+      const response = await api.put(`/users/change-password`, passwordData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
